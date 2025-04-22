@@ -1,5 +1,6 @@
 package izv.zaidinvergeles.tienda.mysqlconnector;
 
+import izv.zaidinvergeles.tienda.Client;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,21 +9,26 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 
 public class consultas {
-    public void guardarUsuario(String usuario, String password){
-        ConexionDB db = new ConexionDB();
-        String sql = "insert into usuarios(nombre, clave) values ('" + usuario +"', '" + password +"');";
-        Statement st;
-        Connection conexion = db.conectar();
-        try
-        {
-            st = conexion.createStatement();
-            int rs = st.executeUpdate(sql);
-            JOptionPane.showMessageDialog(null, "Guardado correctamente");
-        }catch(SQLException e)
-        {
-            System.out.println(e);
-        }
+    public void guardarUsuario(Client cliente){
+    ConexionDB db = new ConexionDB();
+    String sql = "INSERT INTO clients(nombre, password_hash, email, address) VALUES (?, ?, ?, ?)";
+
+    try (Connection conexion = db.conectar();
+         PreparedStatement pst = conexion.prepareStatement(sql)) {
+
+        pst.setString(1, cliente.getName());
+        pst.setString(2, cliente.getPassword());
+        pst.setString(3, cliente.getEmail());
+        pst.setString(4, cliente.getAddress());
+
+        pst.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Guardado correctamente");
+
+    } catch(SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error al guardar: " + e.getMessage());
     }
+}
+
     
     public void consultarUsuario(String user, String pass)
     {
@@ -34,7 +40,7 @@ public class consultas {
     try {
 
         Connection cn = db.conectar();
-        PreparedStatement pst = cn.prepareStatement("SELECT nombre, clave FROM usuarios");
+        PreparedStatement pst = cn.prepareStatement("SELECT nombre, clave FROM clients");
         ResultSet rs = pst.executeQuery();
 
         if (rs.next()) {
