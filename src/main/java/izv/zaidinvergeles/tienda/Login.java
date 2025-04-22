@@ -4,6 +4,9 @@
  */
 package izv.zaidinvergeles.tienda;
 
+import izv.zaidinvergeles.tienda.mysqlconnector.ConexionDB;
+import izv.zaidinvergeles.tienda.mysqlconnector.consultas;
+
 /**
  *
  * @author dito
@@ -38,10 +41,10 @@ public class Login extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        userFORM = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        passwordFORM = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
         registro = new javax.swing.JLabel();
         admin = new javax.swing.JLabel();
@@ -65,9 +68,9 @@ public class Login extends javax.swing.JFrame {
         jLabel2.setPreferredSize(new java.awt.Dimension(50, 16));
         jLabel2.setRequestFocusEnabled(false);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        userFORM.setColumns(20);
+        userFORM.setRows(5);
+        jScrollPane1.setViewportView(userFORM);
 
         jLabel3.setBackground(new java.awt.Color(255, 255, 255));
         jLabel3.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -78,9 +81,9 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setPreferredSize(new java.awt.Dimension(50, 16));
         jLabel3.setRequestFocusEnabled(false);
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
+        passwordFORM.setColumns(20);
+        passwordFORM.setRows(5);
+        jScrollPane2.setViewportView(passwordFORM);
 
         jButton1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         jButton1.setText("Entrar!");
@@ -168,7 +171,8 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
+        consultas conexion = new consultas();
+        conexion.consultarUsuario(userFORM.getText(), passwordFORM.getText());
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -227,8 +231,8 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea passwordFORM;
     private javax.swing.JLabel registro;
+    private javax.swing.JTextArea userFORM;
     // End of variables declaration//GEN-END:variables
 }

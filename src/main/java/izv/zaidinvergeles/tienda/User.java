@@ -14,6 +14,13 @@ abstract class User {
     protected String password;
     protected String email;
 
+    public User() {
+        this.id = 0;
+        this.name = " ";
+        this.password = " ";
+        this.email = " ";
+    }
+    
     public User(int id, String nombre, String password, String email) {
         this.id = id;
         this.name = nombre;
