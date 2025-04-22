@@ -4,5 +4,6 @@ public class Tienda{
         Login inicio = new Login();
         inicio.setVisible(true);
         System.out.println("Alex es gay");
+        System.out.println("Alex es gay");
     }
 }
