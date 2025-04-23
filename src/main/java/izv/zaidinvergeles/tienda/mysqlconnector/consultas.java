@@ -56,8 +56,13 @@ public class consultas {
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-    }
+    }   
 }
+    
+    public void guardarAdmin(){
+        ConexionDB newConnection = new ConexionDB();
+        
+    }
 
     
 }
