@@ -9,24 +9,14 @@ package izv.zaidinvergeles.tienda;
  * @author alfon
  */
 public class Client extends User{
-    private String address;
 
-    public Client(int id, String nombre, String password, String email, String address) {
-        super(id, nombre, password, email);
-        this.address = address;
+    public Client(String nombre, String password, String email) {
+        super(nombre, password, email);
     }
 
     @Override
     public String getTipo() {
         return "client";
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -53,13 +43,6 @@ public class Client extends User{
         this.email = email;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
     
     
 }

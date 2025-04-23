@@ -9,8 +9,8 @@ package izv.zaidinvergeles.tienda;
  * @author alfon
  */
 public class Admin extends User{
-    public Admin(int id, String nombre, String password, String email) {
-        super(id, nombre, password, email);
+    public Admin(String nombre, String password, String email) {
+        super(nombre, password, email);
     }
 
     @Override

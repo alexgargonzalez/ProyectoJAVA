@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 public class consultas {
     public void guardarUsuario(Client cliente){
     ConexionDB db = new ConexionDB();
-    String sql = "INSERT INTO clients(nombre, password_hash, email, address) VALUES (?, ?, ?, ?)";
+    String sql = "INSERT INTO clients(nombre, password_hash, email) VALUES (?, ?, ?)";
 
     try (Connection conexion = db.conectar();
          PreparedStatement pst = conexion.prepareStatement(sql)) {
@@ -19,13 +19,13 @@ public class consultas {
         pst.setString(1, cliente.getName());
         pst.setString(2, cliente.getPassword());
         pst.setString(3, cliente.getEmail());
-        pst.setString(4, cliente.getAddress());
+        
 
         pst.executeUpdate();
         JOptionPane.showMessageDialog(null, "Guardado correctamente");
 
     } catch(SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al guardar: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Error al guardar: " + "el usuario ya está creado");
     }
 }
 

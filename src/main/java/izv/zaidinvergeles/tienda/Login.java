@@ -181,10 +181,14 @@ public class Login extends javax.swing.JFrame {
         this.setVisible(false);
         Registro pantallaRegistro = new Registro();
         pantallaRegistro.setVisible(true);
+        pantallaRegistro.setLocationRelativeTo(null);
     }//GEN-LAST:event_registroMouseClicked
 
     private void adminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_adminMouseClicked
-        
+        this.setVisible(false);
+        LoginAdmin adminWindow = new LoginAdmin();
+        adminWindow.setVisible(true);
+        adminWindow.setLocationRelativeTo(null);
     }//GEN-LAST:event_adminMouseClicked
 
     /**
