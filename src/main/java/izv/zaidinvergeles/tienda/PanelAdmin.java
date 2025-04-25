@@ -4,6 +4,21 @@
  */
 package izv.zaidinvergeles.tienda;
 
+import izv.zaidinvergeles.tienda.mysqlconnector.ConexionDB;
+import izv.zaidinvergeles.tienda.mysqlconnector.consultas;
+import java.util.ArrayList;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import javax.swing.table.DefaultTableModel;
+
+
 /**
  *
  * @author dito
@@ -13,9 +28,33 @@ public class PanelAdmin extends javax.swing.JFrame {
     /**
      * Creates new form PanelAdmin
      */
+    private DefaultTableModel modelClientes;
+    private javax.swing.JTable tablaClientes;
+    private javax.swing.JButton botonEliminarCliente;
+    private javax.swing.JScrollPane jScrollPane2;
+
     public PanelAdmin() {
         initComponents();
+        MostrarTabla();
     }
+    public void MostrarTabla(){
+    DefaultTableModel modelo=new DefaultTableModel();
+    modelo.addColumn("ID");
+    modelo.addColumn("Nombre");
+    modelo.addColumn("Email");
+    tablausuarios.setModel(modelo);
+    
+    consultas consultas = new consultas();
+    ArrayList<Client> lista = consultas.getClientes();
+    String datos[] = new String [3];
+    for (Client usuario : lista) {
+        datos[0] =  usuario.getId();
+        datos[1] = usuario.getName();
+        datos[2] = usuario.getEmail();
+        modelo.addRow(datos);
+    }
+    tablausuarios.setModel(modelo);
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,6 +73,8 @@ public class PanelAdmin extends javax.swing.JFrame {
         panelRound2 = new izv.zaidinvergeles.tienda.PanelRound();
         panelRound3 = new izv.zaidinvergeles.tienda.PanelRound();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tablausuarios = new javax.swing.JTable();
         panelRound4 = new izv.zaidinvergeles.tienda.PanelRound();
         panelRound5 = new izv.zaidinvergeles.tienda.PanelRound();
         jLabel3 = new javax.swing.JLabel();
@@ -109,21 +150,37 @@ public class PanelAdmin extends javax.swing.JFrame {
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
 
+        tablausuarios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(tablausuarios);
+
         javax.swing.GroupLayout panelRound2Layout = new javax.swing.GroupLayout(panelRound2);
         panelRound2.setLayout(panelRound2Layout);
         panelRound2Layout.setHorizontalGroup(
             panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelRound2Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(panelRound3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelRound2Layout.createSequentialGroup()
+                .addContainerGap(72, Short.MAX_VALUE)
+                .addGroup(panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panelRound3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(71, 71, 71))
         );
         panelRound2Layout.setVerticalGroup(
             panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelRound2Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(36, 36, 36)
                 .addComponent(panelRound3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         panelRound4.setBackground(new java.awt.Color(77, 81, 84));
@@ -138,7 +195,7 @@ public class PanelAdmin extends javax.swing.JFrame {
         panelRound5.setRoundTopRight(30);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Black", 0, 18)); // NOI18N
-        jLabel3.setText("Añadir Productos");
+        jLabel3.setText("Añadir/Eliminar Productos");
 
         javax.swing.GroupLayout panelRound5Layout = new javax.swing.GroupLayout(panelRound5);
         panelRound5.setLayout(panelRound5Layout);
@@ -190,7 +247,7 @@ public class PanelAdmin extends javax.swing.JFrame {
                         .addGap(27, 27, 27)
                         .addComponent(panelRound4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(panelRound1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -219,6 +276,7 @@ public class PanelAdmin extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
 
     /**
      * @param args the command line arguments
@@ -261,12 +319,13 @@ public class PanelAdmin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextPane jTextPane1;
     private izv.zaidinvergeles.tienda.PanelRound panelRound1;
     private izv.zaidinvergeles.tienda.PanelRound panelRound2;
     private izv.zaidinvergeles.tienda.PanelRound panelRound3;
     private izv.zaidinvergeles.tienda.PanelRound panelRound4;
     private izv.zaidinvergeles.tienda.PanelRound panelRound5;
-    private izv.zaidinvergeles.tienda.PanelRound panelRound6;
+    private javax.swing.JTable tablausuarios;
     // End of variables declaration//GEN-END:variables
 }

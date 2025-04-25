@@ -10,10 +10,24 @@ package izv.zaidinvergeles.tienda;
  */
 public class Client extends User{
 
+    String id;
+    
+    public Client(){
+        
+    }
+    
     public Client(String nombre, String password, String email) {
         super(nombre, password, email);
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    
     @Override
     public String getTipo() {
         return "client";
