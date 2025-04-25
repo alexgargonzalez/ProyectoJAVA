@@ -6,9 +6,53 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class consultas {
+    
+    
+    public ArrayList<Client> getClientes() {
+        ArrayList<Client> usuarios = new ArrayList<>();
+        
+        try{
+             ConexionDB db = new ConexionDB();
+             Connection cn = db.conectar();
+             PreparedStatement pst = cn.prepareStatement("SELECT * FROM clients");
+             ResultSet rs = pst.executeQuery();
+             while(rs.next()){
+                 Client usuario = new Client();
+                 usuario.setId(rs.getString("id"));
+                 usuario.setName(rs.getString("nombre"));
+                 usuario.setEmail(rs.getString("email"));
+                 usuarios.add(usuario);
+                 
+             }
+        }catch(Exception e){
+            
+        }
+
+        return usuarios;
+    }
+    
+    
+    public void eliminarCliente(String nombreCliente) {
+        ConexionDB db = new ConexionDB();
+        String sql = "DELETE FROM clients WHERE nombre = ?";
+
+        try (Connection conexion = db.conectar();
+             PreparedStatement pst = conexion.prepareStatement(sql)) {
+
+            pst.setString(1, nombreCliente);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Cliente eliminado correctamente");
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al eliminar cliente: " + e.getMessage());
+        }
+    }
+    
     public void guardarUsuario(Client cliente){
     ConexionDB db = new ConexionDB();
     String sql = "INSERT INTO clients(nombre, password_hash, email) VALUES (?, ?, ?)";
