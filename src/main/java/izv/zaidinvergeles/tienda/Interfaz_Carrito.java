@@ -22,38 +22,27 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
      */
     private Carrito carrito;
 
-    public Interfaz_Carrito() {
+    public Interfaz_Carrito(Carrito carrito) {
         initComponents();
-        this.carrito = carrito; // Recibir el carrito
+        this.carrito = carrito;
         String html = "<html><u>Seguir comprando</u></html>";
         seguirComprando.setText(html);
         mostrarProductosEnCarrito();
     }
     
  private void mostrarProductosEnCarrito() {
-        // Limpiar el JPanel antes de agregar los nuevos componentes
         carritoArea.removeAll();
-
-        // Crear un modelo de lista con los productos del carrito
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
-        // Añadir los productos al modelo de lista
         for (Product producto : carrito.getCarrito()) {
-            listModel.addElement(producto.toString()); // Asumiendo que Product tiene un método toString adecuado
+            listModel.addElement(producto.toString()); // Asegúrate de que Product tenga toString bien implementado
         }
 
-        // Actualizar el modelo de JList
         elementos.setModel(listModel);
-
-        // Añadir el JScrollPane que contiene el JList al JPanel carritoArea
         carritoArea.add(jScrollPane1);
-
-        // Asegurarse de que los cambios se apliquen
         carritoArea.revalidate();
         carritoArea.repaint();
     }
-    // Resto del código de la clase (initComponents, etc.)
-}
 
 
 
@@ -164,21 +153,9 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
        /* Set the Nimbus look and feel */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Interfaz_Carrito().setVisible(true);
-            }
+    java.awt.EventQueue.invokeLater(() -> {
+            Carrito carrito = new Carrito(); // Instancia inicial del carrito
+            new Interfaz_Carrito(carrito).setVisible(true);
         });
     }
 
