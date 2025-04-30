@@ -15,7 +15,33 @@ import javax.swing.table.DefaultTableModel;
 
 public class consultas {
     
-    
+    public ArrayList<Product> obtenerProductos() {
+        ArrayList<Product> productos = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = new ConexionDB().conectar(); // Usamos el método conectar()
+            String sql = "SELECT id, nombre, descripcion, precio FROM product"; // Consulta SQL para obtener productos
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nombre = rs.getString("nombre");
+                String descripcion = rs.getString("descripcion");
+                double precio = rs.getDouble("precio");
+                Product producto = new Product(id, nombre, descripcion, precio);
+                productos.add(producto); // Agregar el producto a la lista
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al obtener productos: " + e.getMessage());
+        } finally {
+            ConexionDB.cerrarConexion(conn, ps, rs); // Cerramos la conexión
+        }
+        return productos; // Retornar la lista de productos
+    }
     public ArrayList<Client> getClientes() {
         ArrayList<Client> usuarios = new ArrayList<>();
         

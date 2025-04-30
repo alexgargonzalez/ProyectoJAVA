@@ -1,25 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package izv.zaidinvergeles.tienda;
 
 import java.util.ArrayList;
 
-/**
- *
- * @author alfon
- */
-public class Client extends User{
+public class Client extends User {
 
-    String id;
-    
-    private Carrito carro = new Carrito(new ArrayList<>());
+    private String id;
+    private Carrito carro; // Carrito del cliente
 
-    public Client() {}
+    public Client() {
+        this.carro = new Carrito(); // Inicializar el carrito
+    }
 
     public Client(String nombre, String password, String email) {
         super(nombre, password, email);
+        this.carro = new Carrito(); // Inicializar el carrito
     }
 
     public String getId() {
@@ -29,7 +23,7 @@ public class Client extends User{
     public void setId(String id) {
         this.id = id;
     }
-    
+
     @Override
     public String getTipo() {
         return "client";
@@ -67,6 +61,18 @@ public class Client extends User{
         this.carro = carro;
     }
 
-    
-    
+    // Método para agregar un producto al carrito
+    public void agregarProductoAlCarrito(Product producto) {
+        carro.agregarProducto(producto);
+    }
+
+    // Método para obtener el total del carrito
+    public double obtenerTotalCarrito() {
+        return carro.getPrecioTotal();
+    }
+
+    // Método para vaciar el carrito
+    public void vaciarCarrito() {
+        carro.vaciarCarrito();
+    }
 }

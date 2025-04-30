@@ -4,6 +4,7 @@
  */
 package izv.zaidinvergeles.tienda;
 
+import izv.zaidinvergeles.tienda.mysqlconnector.consultas;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.net.URL;
@@ -23,61 +24,62 @@ public class Menu extends javax.swing.JFrame {
      * Creates new form Menu
      */
  
-    private java.util.List<Product> listaProductos; // Productos desde BD
+   private java.util.List<Product> listaProductos; // Productos desde BD
     private javax.swing.JPanel panelProductos;
-    
-    
-   public Menu() {
+
+    public Menu() {
         initComponents();
-        cargarProductosDesdeBD();
+        cargarIconos(); // Llamar a cargarIconos
+        cargarProductosDesdeBD(); // Cargar productos desde la base de datos
         mostrarProductos();
-}
-   private void cargarIconos() {
-        // Cargar icono de usuario
-        URL userIconURL = getClass().getResource("/img/usuario.png");
-        if (userIconURL != null) {
-            jMenu1.setIcon(new javax.swing.ImageIcon(userIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono de usuario.");
-        }
-
-        // Cargar icono de configuraciones
-        URL configIconURL = getClass().getResource("/img/configuraciones.png");
-        if (configIconURL != null) {
-            jMenuItem3.setIcon(new javax.swing.ImageIcon(configIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono de configuraciones.");
-        }
-
-        // Cargar icono de carrito
-        URL cartIconURL = getClass().getResource("/img/carrito-de-compras.png");
-        if (cartIconURL != null) {
-            jMenu3.setIcon(new javax.swing.ImageIcon(cartIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono del carrito.");
-        }
-
-        // Cargar icono de ir al carrito
-        URL goToCartIconURL = getClass().getResource("/img/carro-de-la-carretilla.png");
-        if (goToCartIconURL != null) {
-            jMenuItem4.setIcon(new javax.swing.ImageIcon(goToCartIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono de ir al carrito.");
-        }
-
-        // Cargar icono de salir
-        URL exitIconURL = getClass().getResource("/img/salida.png");
-        if (exitIconURL != null) {
-            jMenu4.setIcon(new javax.swing.ImageIcon(exitIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono de salir.");
-        }
     }
-private void cargarProductosDesdeBD() {
+
+    private void cargarIconos() {
+    // Cargar icono de usuario
+    URL userIconURL = getClass().getResource("/img/usuario.png");
+    if (userIconURL != null) {
+        jMenu1.setIcon(new javax.swing.ImageIcon(userIconURL));
+    } else {
+        System.err.println("No se pudo cargar el icono de usuario.");
+    }
+
+    // Cargar icono de configuraciones
+    URL configIconURL = getClass().getResource("/img/configuraciones.png");
+    if (configIconURL != null) {
+        jMenuItem3.setIcon(new javax.swing.ImageIcon(configIconURL));
+    } else {
+        System.err.println("No se pudo cargar el icono de configuraciones.");
+    }
+
+    // Cargar icono de carrito
+    URL cartIconURL = getClass().getResource("/img/carrito-de-compras.png");
+    if (cartIconURL != null) {
+        jMenu3.setIcon(new javax.swing.ImageIcon(cartIconURL));
+    } else {
+        System.err.println("No se pudo cargar el icono del carrito.");
+    }
+
+    // Cargar icono de ir al carrito
+    URL goToCartIconURL = getClass().getResource("/img/carro-de-la-carretilla.png");
+    if (goToCartIconURL != null) {
+        jMenuItem4.setIcon(new javax.swing.ImageIcon(goToCartIconURL));
+    } else {
+        System.err.println("No se pudo cargar el icono de ir al carrito.");
+    }
+
+    // Cargar icono de salir
+    URL exitIconURL = getClass().getResource("/img/salida.png");
+    if (exitIconURL != null) {
+        jMenu4.setIcon(new javax.swing.ImageIcon(exitIconURL));
+    } else {
+        System.err.println("No se pudo cargar el icono de salir.");
+    }
+}
+
+    private void cargarProductosDesdeBD() {
         listaProductos = new ArrayList<>();
-        listaProductos.add(new Product(1, "Teclado", "Teclado mecánico RGB", 45.99));
-        listaProductos.add(new Product(2, "Ratón", "Ratón inalámbrico", 25.50));
-        listaProductos.add(new Product(3, "Monitor", "Monitor 24'' Full HD", 120.00));
+        consultas consulta = new consultas();
+        listaProductos = consulta.obtenerProductos(); // Método que debe implementarse en la clase consultas
     }
 
     private void mostrarProductos() {
@@ -107,6 +109,8 @@ private void cargarProductosDesdeBD() {
 
     private void agregarProductoAlCarrito(Product producto) {
         // Implementar la lógica para agregar el producto al carrito
+        // Por ejemplo, puedes usar un método en la clase Carrito para agregar el producto
+        System.out.println("Producto agregado al carrito: " + producto.getName());
     }
 
 

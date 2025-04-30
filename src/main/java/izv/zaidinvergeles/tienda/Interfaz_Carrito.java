@@ -4,6 +4,9 @@
  */
 package izv.zaidinvergeles.tienda;
 
+import izv.zaidinvergeles.tienda.Carrito;
+import izv.zaidinvergeles.tienda.Menu;
+import izv.zaidinvergeles.tienda.Product;
 import javax.swing.DefaultListModel;
 
 /**
@@ -17,22 +20,25 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     /**
      * Creates new form Interfaz_Carrito
      */
+    private Carrito carrito;
+
     public Interfaz_Carrito() {
         initComponents();
+        this.carrito = carrito; // Recibir el carrito
         String html = "<html><u>Seguir comprando</u></html>";
         seguirComprando.setText(html);
         mostrarProductosEnCarrito();
     }
     
-  private void mostrarProductosEnCarrito() {
+ private void mostrarProductosEnCarrito() {
         // Limpiar el JPanel antes de agregar los nuevos componentes
         carritoArea.removeAll();
 
         // Crear un modelo de lista con los productos del carrito
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        
-        // Aquí se deben añadir los productos al modelo de lista
-        for (Product producto : productosEnCarrito) {
+
+        // Añadir los productos al modelo de lista
+        for (Product producto : carrito.getCarrito()) {
             listModel.addElement(producto.toString()); // Asumiendo que Product tiene un método toString adecuado
         }
 
@@ -46,6 +52,8 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         carritoArea.revalidate();
         carritoArea.repaint();
     }
+    // Resto del código de la clase (initComponents, etc.)
+}
 
 
 
@@ -145,7 +153,8 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     private void seguirComprandoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_seguirComprandoMouseClicked
         // TODO add your handling code here:
         this.setVisible(false);
-         Menu menu = new Menu();
+
+        Menu menu = new Menu();
         menu.setVisible(true);
         menu.setLocationRelativeTo(null);
     }//GEN-LAST:event_seguirComprandoMouseClicked
