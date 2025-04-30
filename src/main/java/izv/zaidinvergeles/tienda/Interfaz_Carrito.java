@@ -4,12 +4,16 @@
  */
 package izv.zaidinvergeles.tienda;
 
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author alfon
  */
 public class Interfaz_Carrito extends javax.swing.JFrame {
 
+    
+    private java.util.List<Product> productosEnCarrito = new java.util.ArrayList<>();
     /**
      * Creates new form Interfaz_Carrito
      */
@@ -20,23 +24,31 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         mostrarProductosEnCarrito();
     }
     
-    private void mostrarProductosEnCarrito() {
-        // Crear un JTextArea o JList para mostrar los productos
-        
-         // No permitir la edición del texto
+  private void mostrarProductosEnCarrito() {
+        // Limpiar el JPanel antes de agregar los nuevos componentes
+        carritoArea.removeAll();
 
-        // Añadir los productos del carrito al JTextArea
-        for (Product producto : elementos) {
-            carritoArea.append(producto.toString() + "\n");
+        // Crear un modelo de lista con los productos del carrito
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        
+        // Aquí se deben añadir los productos al modelo de lista
+        for (Product producto : productosEnCarrito) {
+            listModel.addElement(producto.toString()); // Asumiendo que Product tiene un método toString adecuado
         }
 
-        // Añadir el JTextArea al JPanel carrito (y hacer que sea desplazable si es necesario)
-        
-        carritoArea.removeAll(); // Limpiar el JPanel antes de agregar los nuevos componentes
-        carritoArea.add(elementos);
-        carritoArea.revalidate(); // Asegurarse de que los cambios se apliquen
+        // Actualizar el modelo de JList
+        elementos.setModel(listModel);
+
+        // Añadir el JScrollPane que contiene el JList al JPanel carritoArea
+        carritoArea.add(jScrollPane1);
+
+        // Asegurarse de que los cambios se apliquen
+        carritoArea.revalidate();
         carritoArea.repaint();
     }
+
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -133,7 +145,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     private void seguirComprandoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_seguirComprandoMouseClicked
         // TODO add your handling code here:
         this.setVisible(false);
-        Menu menu = new Menu();
+         Menu menu = new Menu();
         menu.setVisible(true);
         menu.setLocationRelativeTo(null);
     }//GEN-LAST:event_seguirComprandoMouseClicked
@@ -142,11 +154,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+       /* Set the Nimbus look and feel */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -154,18 +162,10 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Interfaz_Carrito.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Interfaz_Carrito.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Interfaz_Carrito.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Interfaz_Carrito.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Interfaz_Carrito().setVisible(true);

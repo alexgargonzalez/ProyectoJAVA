@@ -4,6 +4,8 @@
  */
 package izv.zaidinvergeles.tienda;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author alfon
@@ -12,10 +14,10 @@ public class Client extends User{
 
     String id;
     
-    public Client(){
-        
-    }
-    
+    private Carrito carro = new Carrito(new ArrayList<>());
+
+    public Client() {}
+
     public Client(String nombre, String password, String email) {
         super(nombre, password, email);
     }
@@ -55,6 +57,14 @@ public class Client extends User{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Carrito getCarro() {
+        return carro;
+    }
+
+    public void setCarro(Carrito carro) {
+        this.carro = carro;
     }
 
     

@@ -4,6 +4,15 @@
  */
 package izv.zaidinvergeles.tienda;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.net.URL;
+import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 /**
  *
  * @author alfon
@@ -13,9 +22,93 @@ public class Menu extends javax.swing.JFrame {
     /**
      * Creates new form Menu
      */
-    public Menu() {
+ 
+    private java.util.List<Product> listaProductos; // Productos desde BD
+    private javax.swing.JPanel panelProductos;
+    
+    
+   public Menu() {
         initComponents();
+        cargarProductosDesdeBD();
+        mostrarProductos();
+}
+   private void cargarIconos() {
+        // Cargar icono de usuario
+        URL userIconURL = getClass().getResource("/img/usuario.png");
+        if (userIconURL != null) {
+            jMenu1.setIcon(new javax.swing.ImageIcon(userIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono de usuario.");
+        }
+
+        // Cargar icono de configuraciones
+        URL configIconURL = getClass().getResource("/img/configuraciones.png");
+        if (configIconURL != null) {
+            jMenuItem3.setIcon(new javax.swing.ImageIcon(configIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono de configuraciones.");
+        }
+
+        // Cargar icono de carrito
+        URL cartIconURL = getClass().getResource("/img/carrito-de-compras.png");
+        if (cartIconURL != null) {
+            jMenu3.setIcon(new javax.swing.ImageIcon(cartIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono del carrito.");
+        }
+
+        // Cargar icono de ir al carrito
+        URL goToCartIconURL = getClass().getResource("/img/carro-de-la-carretilla.png");
+        if (goToCartIconURL != null) {
+            jMenuItem4.setIcon(new javax.swing.ImageIcon(goToCartIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono de ir al carrito.");
+        }
+
+        // Cargar icono de salir
+        URL exitIconURL = getClass().getResource("/img/salida.png");
+        if (exitIconURL != null) {
+            jMenu4.setIcon(new javax.swing.ImageIcon(exitIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono de salir.");
+        }
     }
+private void cargarProductosDesdeBD() {
+        listaProductos = new ArrayList<>();
+        listaProductos.add(new Product(1, "Teclado", "Teclado mecánico RGB", 45.99));
+        listaProductos.add(new Product(2, "Ratón", "Ratón inalámbrico", 25.50));
+        listaProductos.add(new Product(3, "Monitor", "Monitor 24'' Full HD", 120.00));
+    }
+
+    private void mostrarProductos() {
+        panelProductos = new JPanel();
+        panelProductos.setLayout(new GridLayout(0, 1, 10, 10));
+
+        for (Product producto : listaProductos) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+
+            JLabel lblNombre = new JLabel(producto.toString());
+            JButton btnAgregar = new JButton("Añadir al carrito");
+
+            btnAgregar.addActionListener(e -> agregarProductoAlCarrito(producto));
+
+            panel.add(lblNombre, BorderLayout.CENTER);
+            panel.add(btnAgregar, BorderLayout.EAST);
+            panelProductos.add(panel);
+        }
+
+        jPanel1.removeAll();
+        jPanel1.setLayout(new BorderLayout());
+        jPanel1.add(new JScrollPane(panelProductos), BorderLayout.CENTER);
+        jPanel1.revalidate();
+        jPanel1.repaint();
+    }
+
+    private void agregarProductoAlCarrito(Product producto) {
+        // Implementar la lógica para agregar el producto al carrito
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
