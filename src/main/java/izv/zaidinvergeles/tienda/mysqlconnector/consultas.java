@@ -1,6 +1,9 @@
 package izv.zaidinvergeles.tienda.mysqlconnector;
 
 import izv.zaidinvergeles.tienda.Client;
+import izv.zaidinvergeles.tienda.Login;
+import izv.zaidinvergeles.tienda.Menu;
+import izv.zaidinvergeles.tienda.Product;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -91,6 +94,12 @@ public class consultas {
 
             if (user.equals(usuarioCorrecto) && pass.equals(passCorrecto)) {
                 JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido " + user);
+                Login entrar = new Login();
+                Menu menu = new Menu();
+                entrar.setVisible(false);
+                menu.setVisible(true);
+                menu.setLocationRelativeTo(null);
+                
             } else {
                 JOptionPane.showMessageDialog(null, "Contraseña incorrecta.");
             }
@@ -130,6 +139,38 @@ public class consultas {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
     }
+    
+    public ArrayList<Product> obtenerProductosDelCarrito(int idCliente) {
+    ArrayList<Product> productos = new ArrayList<>();
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    try {
+        conn = new ConexionDB().conectar(); // Usamos el conectar()
+        String sql = "SELECT p.id, p.nombre, p.descripcion, p.precio FROM carrito c JOIN product p ON c.id_producto = p.id WHERE c.id_cliente = ?";
+        ps = conn.prepareStatement(sql);
+        ps.setInt(1, idCliente);
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String descripcion = rs.getString("descripcion");
+            double precio = rs.getDouble("precio");
+            Product producto = new Product(id, nombre, descripcion, precio);
+            productos.add(producto);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        ConexionDB.cerrarConexion(conn, ps, rs); // Cerramos todo
+    }
+    return productos;
+}
+
+
+    
 
     
 }
