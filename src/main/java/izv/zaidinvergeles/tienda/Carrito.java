@@ -7,7 +7,7 @@ public class Carrito {
     private ArrayList<Product> carrito;
 
     public Carrito() {
-        this.carrito = new ArrayList<>();
+        this.carrito = new ArrayList();
     }
 
     public ArrayList<Product> getCarrito() {

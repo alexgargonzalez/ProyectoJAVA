@@ -6,7 +6,6 @@ package izv.zaidinvergeles.tienda;
 
 import izv.zaidinvergeles.tienda.mysqlconnector.ConexionDB;
 import izv.zaidinvergeles.tienda.mysqlconnector.consultas;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -169,16 +168,8 @@ public class Login extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         consultas conexion = new consultas();
-         boolean loginCorrecto = conexion.consultarUsuario(userFORM.getText(), passwordFORM.getText());
-    
-    if (loginCorrecto) {
-        this.setVisible(false); 
-        Menu menu = new Menu();
-        menu.setVisible(true);
-        menu.setLocationRelativeTo(null);
-    } else {
-        JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error de login", JOptionPane.ERROR_MESSAGE);
-    }
+        conexion.consultarUsuario(userFORM.getText(), passwordFORM.getText());
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void registroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registroMouseClicked

@@ -1,5 +1,6 @@
 package izv.zaidinvergeles.tienda.mysqlconnector;
 
+import izv.zaidinvergeles.tienda.Carrito;
 import izv.zaidinvergeles.tienda.Client;
 import izv.zaidinvergeles.tienda.Login;
 import izv.zaidinvergeles.tienda.Menu;
@@ -14,6 +15,24 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class consultas {
+    
+    private int idCliente;
+
+    public consultas(int idCliente) {
+        idCliente = this.idCliente;
+    }
+
+    public consultas() {
+    }
+    
+
+    public int getIdCliente() {
+        return idCliente;
+    }
+    
+    
+    
+    
     
     public ArrayList<Product> obtenerProductos() {
         ArrayList<Product> productos = new ArrayList<>();
@@ -101,13 +120,29 @@ public class consultas {
         JOptionPane.showMessageDialog(null, "Error al guardar: " + "el usuario ya está creado");
     }
 }
+    
 
     
-    public boolean consultarUsuario(String user, String pass) {
+    public int devolverIdCliente(String nombreCliente){
+        ConexionDB db = new ConexionDB();
+        int idDelCliente = -1;
+        try {
+            Connection cn = db.conectar();
+            PreparedStatement pst = cn.prepareStatement("SELECT id FROM clients WHERE nombre = ?");
+            pst.setString(1, nombreCliente);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+            idDelCliente = rs.getInt("id");
+            }
+        } catch (Exception e) {
+        }
+        return idDelCliente;
+    }
+    
+    public void consultarUsuario(String user, String pass) {
     ConexionDB db = new ConexionDB();
     String usuarioCorrecto = null;
     String passCorrecto = null;
-    boolean encontrado = false;
 
     try {
         Connection cn = db.conectar();
@@ -116,22 +151,27 @@ public class consultas {
         ResultSet rs = pst.executeQuery();
 
         if (rs.next()) {
-            
             usuarioCorrecto = rs.getString("nombre");
             passCorrecto = rs.getString("password_hash");
 
             if (user.equals(usuarioCorrecto) && pass.equals(passCorrecto)) {
-                encontrado = true;
-
-               
-                
-            } 
-        } 
+                JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido " + user);
+                Login entrar = new Login();
+                Menu menu = new Menu();
+                entrar.setVisible(false);
+                menu.setVisible(true);
+                menu.setLocationRelativeTo(null);
+                this.idCliente = devolverIdCliente(usuarioCorrecto);
+            } else {
+                JOptionPane.showMessageDialog(null, "Contraseña incorrecta.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Usuario no encontrado.");
+        }
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
     }   
-    return encontrado;
 }
     
     public void consultarAdmin(String user, String pass, String passAdmin){

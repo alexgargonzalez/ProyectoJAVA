@@ -7,6 +7,7 @@ package izv.zaidinvergeles.tienda;
 import izv.zaidinvergeles.tienda.Carrito;
 import izv.zaidinvergeles.tienda.Menu;
 import izv.zaidinvergeles.tienda.Product;
+import izv.zaidinvergeles.tienda.mysqlconnector.consultas;
 import javax.swing.DefaultListModel;
 
 /**
@@ -20,31 +21,33 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     /**
      * Creates new form Interfaz_Carrito
      */
-    private Carrito carrito = new Carrito();
-
-    public Interfaz_Carrito(Carrito carrito) {
+    private Carrito carrito;
+    
+    private int idCliente;
+    private consultas sql = new consultas(); // Añade esta línea
+    
+    public Interfaz_Carrito(int idCliente) {
         initComponents();
-        this.carrito = carrito;
+        this.idCliente = idCliente;
+        this.carrito = new Carrito();
         String html = "<html><u>Seguir comprando</u></html>";
+        carrito.getCarrito().addAll(
+            sql.obtenerProductosDelCarrito(1) 
+        );
         seguirComprando.setText(html);
         mostrarProductosEnCarrito();
+        System.out.println("ID Cliente: " + sql.getIdCliente());
     }
     
  private void mostrarProductosEnCarrito() {
-        carritoArea.removeAll();
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
         for (Product producto : carrito.getCarrito()) {
-            listModel.addElement(producto.toString()); // Asegúrate de que Product tenga toString bien implementado
+            listModel.addElement(producto.toString()); // Asegúrate de que Product tenga un toString() adecuado
         }
 
         elementos.setModel(listModel);
-        carritoArea.add(jScrollPane1);
-        carritoArea.revalidate();
-        carritoArea.repaint();
     }
-
-
 
 
     /**
@@ -153,9 +156,13 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
        /* Set the Nimbus look and feel */
+        
+        consultas consulta = new consultas();
+       Carrito carrito = new Carrito();
     java.awt.EventQueue.invokeLater(() -> {
-            Carrito carrito = new Carrito(); // Instancia inicial del carrito
-            new Interfaz_Carrito(carrito).setVisible(true);
+             // Instancia inicial del carrito
+            Interfaz_Carrito carritojaja = new Interfaz_Carrito(consulta.getIdCliente());
+            carritojaja.setVisible(true);
         });
     }
 

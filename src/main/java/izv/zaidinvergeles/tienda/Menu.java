@@ -24,16 +24,13 @@ public class Menu extends javax.swing.JFrame {
      * Creates new form Menu
      */
  
-    private java.util.List<Product> listaProductos; // Productos desde BD
+   private java.util.List<Product> listaProductos; // Productos desde BD
     private javax.swing.JPanel panelProductos;
-    private Carrito carrito;
-    
 
     public Menu() {
         initComponents();
         cargarIconos(); // Llamar a cargarIconos
         cargarProductosDesdeBD(); // Cargar productos desde la base de datos
-        carrito = new Carrito();
         mostrarProductos();
     }
 
@@ -65,7 +62,7 @@ public class Menu extends javax.swing.JFrame {
     // Cargar icono de ir al carrito
     URL goToCartIconURL = getClass().getResource("/img/carro-de-la-carretilla.png");
     if (goToCartIconURL != null) {
-        jMenuItem4.setIcon(new javax.swing.ImageIcon(goToCartIconURL));
+        ir_Carrito.setIcon(new javax.swing.ImageIcon(goToCartIconURL));
     } else {
         System.err.println("No se pudo cargar el icono de ir al carrito.");
     }
@@ -131,7 +128,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        ir_Carrito = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -184,19 +181,14 @@ public class Menu extends javax.swing.JFrame {
         jMenu3.setPreferredSize(new java.awt.Dimension(240, 40));
         jMenu3.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/img/usuario.png"))); // NOI18N
 
-        jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/carro-de-la-carretilla.png"))); // NOI18N
-        jMenuItem4.setText("Ir al carrito");
-        jMenuItem4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenuItem4MouseClicked(evt);
-            }
-        });
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+        ir_Carrito.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/carro-de-la-carretilla.png"))); // NOI18N
+        ir_Carrito.setText("Ir al carrito");
+        ir_Carrito.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
+                ir_CarritoActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem4);
+        jMenu3.add(ir_Carrito);
 
         jMenuBar1.add(jMenu3);
 
@@ -210,11 +202,6 @@ public class Menu extends javax.swing.JFrame {
 
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cerrar-sesion.png"))); // NOI18N
         jMenuItem1.setText("Cerrar Sesión");
-        jMenuItem1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenuItem1MouseClicked(evt);
-            }
-        });
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -250,39 +237,24 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-                this.setVisible(false);
-                Login login = new Login();
-                login.setVisible(true);
+        // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
-      
-         this.setVisible(false);
-        
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
-    private void jMenuItem4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem4MouseClicked
+    private void ir_CarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ir_CarritoActionPerformed
         // TODO add your handling code here:
-        // Ocultar la ventana actual
-    this.setVisible(false);
-    
-    // Crear una nueva instancia de Interfaz_Carrito y pasar el carrito
-    Interfaz_Carrito interfazCarrito = new Interfaz_Carrito(carrito); // Asegúrate de que 'carrito' esté inicializado
-    interfazCarrito.setVisible(true);
-    }//GEN-LAST:event_jMenuItem4MouseClicked
-
-    private void jMenuItem1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem1MouseClicked
-                
-    }//GEN-LAST:event_jMenuItem1MouseClicked
-
-    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem4ActionPerformed
+        this.setVisible(false);
+        consultas consulta = new consultas();
+        Interfaz_Carrito carrito = new Interfaz_Carrito(consulta.getIdCliente());
+        carrito.setVisible(true);
+    }//GEN-LAST:event_ir_CarritoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -320,6 +292,7 @@ public class Menu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem ir_Carrito;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
@@ -327,7 +300,6 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
