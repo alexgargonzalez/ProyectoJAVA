@@ -103,10 +103,11 @@ public class consultas {
 }
 
     
-    public void consultarUsuario(String user, String pass) {
+    public boolean consultarUsuario(String user, String pass) {
     ConexionDB db = new ConexionDB();
     String usuarioCorrecto = null;
     String passCorrecto = null;
+    boolean encontrado = false;
 
     try {
         Connection cn = db.conectar();
@@ -115,27 +116,22 @@ public class consultas {
         ResultSet rs = pst.executeQuery();
 
         if (rs.next()) {
+            
             usuarioCorrecto = rs.getString("nombre");
             passCorrecto = rs.getString("password_hash");
 
             if (user.equals(usuarioCorrecto) && pass.equals(passCorrecto)) {
-                JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido " + user);
-                Login entrar = new Login();
-                Menu menu = new Menu();
-                entrar.setVisible(false);
-                menu.setVisible(true);
-                menu.setLocationRelativeTo(null);
+                encontrado = true;
+
+               
                 
-            } else {
-                JOptionPane.showMessageDialog(null, "Contraseña incorrecta.");
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Usuario no encontrado.");
-        }
+            } 
+        } 
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
     }   
+    return encontrado;
 }
     
     public void consultarAdmin(String user, String pass, String passAdmin){

@@ -24,13 +24,16 @@ public class Menu extends javax.swing.JFrame {
      * Creates new form Menu
      */
  
-   private java.util.List<Product> listaProductos; // Productos desde BD
+    private java.util.List<Product> listaProductos; // Productos desde BD
     private javax.swing.JPanel panelProductos;
+    private Carrito carrito;
+    
 
     public Menu() {
         initComponents();
         cargarIconos(); // Llamar a cargarIconos
         cargarProductosDesdeBD(); // Cargar productos desde la base de datos
+        carrito = new Carrito();
         mostrarProductos();
     }
 
@@ -183,6 +186,16 @@ public class Menu extends javax.swing.JFrame {
 
         jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/carro-de-la-carretilla.png"))); // NOI18N
         jMenuItem4.setText("Ir al carrito");
+        jMenuItem4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuItem4MouseClicked(evt);
+            }
+        });
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu3.add(jMenuItem4);
 
         jMenuBar1.add(jMenu3);
@@ -197,6 +210,11 @@ public class Menu extends javax.swing.JFrame {
 
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cerrar-sesion.png"))); // NOI18N
         jMenuItem1.setText("Cerrar Sesión");
+        jMenuItem1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuItem1MouseClicked(evt);
+            }
+        });
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -232,16 +250,39 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+                this.setVisible(false);
+                Login login = new Login();
+                login.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
+      
+         this.setVisible(false);
+        
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem4MouseClicked
+        // TODO add your handling code here:
+        // Ocultar la ventana actual
+    this.setVisible(false);
+    
+    // Crear una nueva instancia de Interfaz_Carrito y pasar el carrito
+    Interfaz_Carrito interfazCarrito = new Interfaz_Carrito(carrito); // Asegúrate de que 'carrito' esté inicializado
+    interfazCarrito.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4MouseClicked
+
+    private void jMenuItem1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem1MouseClicked
+                
+    }//GEN-LAST:event_jMenuItem1MouseClicked
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments

@@ -20,7 +20,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     /**
      * Creates new form Interfaz_Carrito
      */
-    private Carrito carrito;
+    private Carrito carrito = new Carrito();
 
     public Interfaz_Carrito(Carrito carrito) {
         initComponents();
