@@ -16,23 +16,23 @@ import javax.swing.table.DefaultTableModel;
 
 public class consultas {
     
-    private int idCliente;
+    // Almacenamos el ID del cliente conectado actualmente (estático para ser compartido en toda la aplicación)
+    private static int idClienteActual;
 
     public consultas(int idCliente) {
-        idCliente = this.idCliente;
+        idClienteActual = idCliente;
     }
 
     public consultas() {
     }
     
-
-    public int getIdCliente() {
-        return idCliente;
+    public static int getIdCliente() {
+        return idClienteActual;
     }
     
-    
-    
-    
+    public static void setIdCliente(int id) {
+        idClienteActual = id;
+    }
     
     public ArrayList<Product> obtenerProductos() {
         ArrayList<Product> productos = new ArrayList<>();
@@ -61,6 +61,7 @@ public class consultas {
         }
         return productos; // Retornar la lista de productos
     }
+    
     public ArrayList<Client> getClientes() {
         ArrayList<Client> usuarios = new ArrayList<>();
         
@@ -132,9 +133,10 @@ public class consultas {
             pst.setString(1, nombreCliente);
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
-            idDelCliente = rs.getInt("id");
+                idDelCliente = rs.getInt("id");
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return idDelCliente;
     }
@@ -146,22 +148,27 @@ public class consultas {
 
     try {
         Connection cn = db.conectar();
-        PreparedStatement pst = cn.prepareStatement("SELECT nombre, password_hash FROM clients WHERE nombre = ?");
+        PreparedStatement pst = cn.prepareStatement("SELECT id, nombre, password_hash FROM clients WHERE nombre = ?");
         pst.setString(1, user);
         ResultSet rs = pst.executeQuery();
 
         if (rs.next()) {
             usuarioCorrecto = rs.getString("nombre");
             passCorrecto = rs.getString("password_hash");
+            int clienteId = rs.getInt("id");
 
             if (user.equals(usuarioCorrecto) && pass.equals(passCorrecto)) {
+                // Aquí asignamos el ID del cliente a la variable estática
+                setIdCliente(clienteId);
+                
                 JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido " + user);
+                System.out.println("ID del cliente conectado: " + idClienteActual);
+                
                 Login entrar = new Login();
                 Menu menu = new Menu();
                 entrar.setVisible(false);
                 menu.setVisible(true);
                 menu.setLocationRelativeTo(null);
-                this.idCliente = devolverIdCliente(usuarioCorrecto);
             } else {
                 JOptionPane.showMessageDialog(null, "Contraseña incorrecta.");
             }
@@ -231,8 +238,30 @@ public class consultas {
     return productos;
 }
 
-
-    
-
+    // Método para agregar producto al carrito de un cliente en la base de datos
+    public boolean agregarProductoAlCarrito(int idCliente, int idProducto) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        boolean resultado = false;
+        
+        try {
+            conn = new ConexionDB().conectar();
+            String sql = "INSERT INTO carrito (id_cliente, id_producto) VALUES (?, ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idCliente);
+            ps.setInt(2, idProducto);
+            
+            int filasAfectadas = ps.executeUpdate();
+            if (filasAfectadas > 0) {
+                resultado = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConexionDB.cerrarConexion(conn, ps, null);
+        }
+        
+        return resultado;
+    }
     
 }

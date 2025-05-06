@@ -17,7 +17,7 @@ import javax.swing.DefaultListModel;
 public class Interfaz_Carrito extends javax.swing.JFrame {
 
     
-    private java.util.List<Product> productosEnCarrito = new java.util.ArrayList<>();
+   private java.util.List<Product> productosEnCarrito = new java.util.ArrayList<>();
     /**
      * Creates new form Interfaz_Carrito
      */
@@ -26,17 +26,20 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     private int idCliente;
     private consultas sql = new consultas(); // Añade esta línea
     
-    public Interfaz_Carrito(int idCliente) {
+    public Interfaz_Carrito() {
         initComponents();
-        this.idCliente = idCliente;
+        // Obtenemos el ID del cliente conectado actualmente
+        this.idCliente = sql.getIdCliente();
         this.carrito = new Carrito();
         String html = "<html><u>Seguir comprando</u></html>";
+        
+        // Cargamos los productos del carrito de ESTE cliente
         carrito.getCarrito().addAll(
-            sql.obtenerProductosDelCarrito(1) 
+            sql.obtenerProductosDelCarrito(idCliente) 
         );
         seguirComprando.setText(html);
         mostrarProductosEnCarrito();
-        System.out.println("ID Cliente: " + sql.getIdCliente());
+        System.out.println("ID Cliente en Interfaz_Carrito: " + idCliente);
     }
     
  private void mostrarProductosEnCarrito() {
@@ -157,12 +160,22 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     public static void main(String args[]) {
        /* Set the Nimbus look and feel */
         
-        consultas consulta = new consultas();
-       Carrito carrito = new Carrito();
-    java.awt.EventQueue.invokeLater(() -> {
-             // Instancia inicial del carrito
-            Interfaz_Carrito carritojaja = new Interfaz_Carrito(consulta.getIdCliente());
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Interfaz_Carrito.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            // Instancia del carrito sin pasarle parámetros
+            Interfaz_Carrito carritojaja = new Interfaz_Carrito();
             carritojaja.setVisible(true);
+            carritojaja.setLocationRelativeTo(null);
         });
     }
 

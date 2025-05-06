@@ -26,9 +26,16 @@ public class Menu extends javax.swing.JFrame {
  
    private java.util.List<Product> listaProductos; // Productos desde BD
     private javax.swing.JPanel panelProductos;
+    private int idCliente; // ID del cliente actual
+    consultas consulta = new consultas();
+
 
     public Menu() {
         initComponents();
+        // Obtenemos el ID del cliente de la clase consultas
+        this.idCliente = consulta.getIdCliente();
+        System.out.println("ID del cliente en Menu: " + idCliente);
+        
         cargarIconos(); // Llamar a cargarIconos
         cargarProductosDesdeBD(); // Cargar productos desde la base de datos
         mostrarProductos();
@@ -109,9 +116,18 @@ public class Menu extends javax.swing.JFrame {
 
     private void agregarProductoAlCarrito(Product producto) {
         // Implementar la lógica para agregar el producto al carrito
-        // Por ejemplo, puedes usar un método en la clase Carrito para agregar el producto
-        System.out.println("Producto agregado al carrito: " + producto.getName());
+        consultas consulta = new consultas();
+        
+        // Usamos el ID del cliente actual para agregar el producto a su carrito en la BD
+        boolean agregado = consulta.agregarProductoAlCarrito(idCliente, producto.getId());
+        
+        if (agregado) {
+            System.out.println("Producto agregado al carrito: " + producto.getName() + " para el cliente ID: " + idCliente);
+        } else {
+            System.out.println("Error al agregar producto al carrito.");
+        }
     }
+
 
 
     /**
@@ -252,7 +268,7 @@ public class Menu extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.setVisible(false);
         consultas consulta = new consultas();
-        Interfaz_Carrito carrito = new Interfaz_Carrito(consulta.getIdCliente());
+        Interfaz_Carrito carrito = new Interfaz_Carrito();
         carrito.setVisible(true);
     }//GEN-LAST:event_ir_CarritoActionPerformed
 

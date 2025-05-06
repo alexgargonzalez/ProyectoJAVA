@@ -6,6 +6,7 @@ public class Client extends User {
 
     private String id;
     private Carrito carro; // Carrito del cliente
+    private int idNumerico; // Añadimos un ID numérico para manipulación más sencilla
 
     public Client() {
         this.carro = new Carrito(); // Inicializar el carrito
@@ -15,6 +16,12 @@ public class Client extends User {
         super(nombre, password, email);
         this.carro = new Carrito(); // Inicializar el carrito
     }
+    
+    public Client(int id, String nombre, String password, String email) {
+        super(nombre, password, email);
+        this.idNumerico = id;
+        this.carro = new Carrito(); // Inicializar el carrito
+    }
 
     public String getId() {
         return id;
@@ -22,6 +29,14 @@ public class Client extends User {
 
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public int getIdNumerico() {
+        return idNumerico;
+    }
+    
+    public void setIdNumerico(int idNumerico) {
+        this.idNumerico = idNumerico;
     }
 
     @Override
