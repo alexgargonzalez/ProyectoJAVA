@@ -28,8 +28,7 @@ public class PanelAdmin extends javax.swing.JFrame {
     /**
      * Creates new form PanelAdmin
      */
-    private DefaultTableModel modelClientes;
-    private javax.swing.JTable tablaClientes;
+     private DefaultTableModel modelClientes;
     private javax.swing.JButton botonEliminarCliente;
     private javax.swing.JScrollPane jScrollPane2;
 
@@ -37,24 +36,29 @@ public class PanelAdmin extends javax.swing.JFrame {
         initComponents();
         MostrarTabla();
     }
-    public void MostrarTabla(){
-    DefaultTableModel modelo=new DefaultTableModel();
-    modelo.addColumn("ID");
-    modelo.addColumn("Nombre");
-    modelo.addColumn("Email");
-    tablausuarios.setModel(modelo);
     
-    consultas consultas = new consultas();
-    ArrayList<Client> lista = consultas.getClientes();
-    String datos[] = new String [3];
-    for (Client usuario : lista) {
-        datos[0] =  usuario.getId();
-        datos[1] = usuario.getName();
-        datos[2] = usuario.getEmail();
-        modelo.addRow(datos);
+    
+        
+
+    
+    public void MostrarTabla(){
+        DefaultTableModel modelo=new DefaultTableModel();
+        modelo.addColumn("ID");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Email");
+        tablausuarios.setModel(modelo);
+        
+        consultas consultas = new consultas();
+        ArrayList<Client> lista = consultas.getClientes();
+        String datos[] = new String [3];
+        for (Client usuario : lista) {
+            datos[0] =  usuario.getId();
+            datos[1] = usuario.getName();
+            datos[2] = usuario.getEmail();
+            modelo.addRow(datos);
+        }
+        tablausuarios.setModel(modelo);
     }
-    tablausuarios.setModel(modelo);
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -75,6 +79,7 @@ public class PanelAdmin extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tablausuarios = new javax.swing.JTable();
+        eliminar = new javax.swing.JButton();
         panelRound4 = new izv.zaidinvergeles.tienda.PanelRound();
         panelRound5 = new izv.zaidinvergeles.tienda.PanelRound();
         jLabel3 = new javax.swing.JLabel();
@@ -163,6 +168,13 @@ public class PanelAdmin extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(tablausuarios);
 
+        eliminar.setText("Eliminar");
+        eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelRound2Layout = new javax.swing.GroupLayout(panelRound2);
         panelRound2.setLayout(panelRound2Layout);
         panelRound2Layout.setHorizontalGroup(
@@ -171,7 +183,9 @@ public class PanelAdmin extends javax.swing.JFrame {
                 .addContainerGap(72, Short.MAX_VALUE)
                 .addGroup(panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelRound3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(eliminar)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(71, 71, 71))
         );
         panelRound2Layout.setVerticalGroup(
@@ -181,7 +195,9 @@ public class PanelAdmin extends javax.swing.JFrame {
                 .addComponent(panelRound3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(45, 45, 45)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(eliminar)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         panelRound4.setBackground(new java.awt.Color(77, 81, 84));
@@ -277,6 +293,35 @@ public class PanelAdmin extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
+        // TODO add your handling code here:
+        // Verificar si hay una fila seleccionada
+    int selectedRow = tablausuarios.getSelectedRow();
+    
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente para eliminar", 
+                                      "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    // Obtener el nombre del cliente de la tabla
+    String nombreCliente = (String) tablausuarios.getValueAt(selectedRow, 1);
+    
+    // Mostrar confirmación antes de eliminar
+    int confirmacion = JOptionPane.showConfirmDialog(this, 
+                       "¿Está seguro que desea eliminar el cliente " + nombreCliente + "?", 
+                       "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+    
+    if (confirmacion == JOptionPane.YES_OPTION) {
+        // Llamar el método para eliminar el cliente
+        consultas query = new consultas();
+        query.eliminarCliente(nombreCliente);
+        
+        // Actualizar la tabla de clientes después de eliminar
+        MostrarTabla();
+    }
+    }//GEN-LAST:event_eliminarActionPerformed
     
 
     /**
@@ -315,6 +360,7 @@ public class PanelAdmin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton eliminar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

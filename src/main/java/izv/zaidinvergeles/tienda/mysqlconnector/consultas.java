@@ -181,33 +181,46 @@ public class consultas {
     }   
 }
     
-    public void consultarAdmin(String user, String pass, String passAdmin){
-        ConexionDB newConnection = new ConexionDB();
-        String usuarioCorrecto = null;
-        String contraseñaCorrecta = null;
-        String claveCorrecta = null;
-        try {
-            Connection cn = newConnection.conectar();
-            PreparedStatement pst = cn.prepareStatement("SELECT nombre, password_hash, password_admin FROM administrator WHERE password_admin= ? ");
-            pst.setString(1, passAdmin);
-            ResultSet rs = pst.executeQuery();
+  public boolean consultarAdmin(String user, String pass, String passAdmin) {
+    ConexionDB newConnection = new ConexionDB();
+    String usuarioCorrecto = null;
+    String contraseñaCorrecta = null;
+    String claveCorrecta = null;
+    boolean loginExitoso = false;
+    
+    try {
+        Connection cn = newConnection.conectar();
+        PreparedStatement pst = cn.prepareStatement("SELECT nombre, password_hash, password_admin FROM administrator WHERE password_admin= ? ");
+        pst.setString(1, passAdmin);
+        ResultSet rs = pst.executeQuery();
+        
+        if (rs.next()) {
+            usuarioCorrecto = rs.getString("nombre");
+            contraseñaCorrecta = rs.getString("password_hash");
+            claveCorrecta = rs.getString("password_admin");
             
-            if (rs.next()) {
-                usuarioCorrecto = rs.getString("nombre");
-                contraseñaCorrecta = rs.getString("password_hash");
-                claveCorrecta = rs.getString("password_admin");
-                if (usuarioCorrecto.equals(user) && contraseñaCorrecta.equals(pass) && claveCorrecta.equals(passAdmin)) {
-                    JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido Sr " + user);
-                }else{
-                    JOptionPane.showMessageDialog(null, "El conjunto de datos introducidos es incorrecto");
-                }
-            }else{
-                JOptionPane.showMessageDialog(null, "Usuario no encontrado");
+            if (usuarioCorrecto.equals(user) && contraseñaCorrecta.equals(pass) && claveCorrecta.equals(passAdmin)) {
+                JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido Sr " + user);
+                loginExitoso = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "El conjunto de datos introducidos es incorrecto");
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        } else {
+            JOptionPane.showMessageDialog(null, "Usuario no encontrado");
         }
+        
+        // Cerrar recursos
+        rs.close();
+        pst.close();
+        cn.close();
+        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
     }
+    
+    return loginExitoso;
+}
+    
     public boolean eliminarProductoDelCarrito(int idCliente, int idProducto) {
     Connection conn = null;
     PreparedStatement ps = null;

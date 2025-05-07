@@ -5,6 +5,7 @@
 package izv.zaidinvergeles.tienda;
 
 import izv.zaidinvergeles.tienda.mysqlconnector.consultas;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -184,9 +185,22 @@ public class LoginAdmin extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         consultas connectionAdmin = new consultas();
-        String password = new String(txtPassword.getPassword());
-        String clue = new String(txtClue.getPassword());
-        connectionAdmin.consultarAdmin(txtUser.getText(), password, clue);
+    String password = new String(txtPassword.getPassword());
+    String clue = new String(txtClue.getPassword());
+    
+    // Usar el método consultarAdmin modificado que retorna un boolean
+    boolean loginExitoso = connectionAdmin.consultarAdmin(txtUser.getText(), password, clue);
+    
+    // Si la autenticación fue exitosa, abrir el panel de administrador
+    if (loginExitoso) {
+        // Ocultar la ventana de login de admin
+        this.setVisible(false);
+        
+        // Abrir el panel de administrador
+        PanelAdmin panelAdmin = new PanelAdmin();
+        panelAdmin.setVisible(true);
+        panelAdmin.setLocationRelativeTo(null);
+    }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void clientInAdminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientInAdminMouseClicked
