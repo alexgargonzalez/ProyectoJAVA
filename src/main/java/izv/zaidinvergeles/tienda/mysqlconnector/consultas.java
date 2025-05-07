@@ -208,6 +208,31 @@ public class consultas {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
     }
+    public boolean eliminarProductoDelCarrito(int idCliente, int idProducto) {
+    Connection conn = null;
+    PreparedStatement ps = null;
+    boolean resultado = false;
+    
+    try {
+        conn = new ConexionDB().conectar();
+        String sql = "DELETE FROM carrito WHERE id_cliente = ? AND id_producto = ? LIMIT 1";
+        ps = conn.prepareStatement(sql);
+        ps.setInt(1, idCliente);
+        ps.setInt(2, idProducto);
+        
+        int filasAfectadas = ps.executeUpdate();
+        if (filasAfectadas > 0) {
+            resultado = true;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error al eliminar el producto del carrito: " + e.getMessage());
+    } finally {
+        ConexionDB.cerrarConexion(conn, ps, null);
+    }
+    
+    return resultado;
+}
     
     public ArrayList<Product> obtenerProductosDelCarrito(int idCliente) {
     ArrayList<Product> productos = new ArrayList<>();

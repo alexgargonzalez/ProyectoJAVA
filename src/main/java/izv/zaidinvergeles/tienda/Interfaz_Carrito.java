@@ -43,14 +43,16 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     }
     
  private void mostrarProductosEnCarrito() {
-        DefaultListModel<String> listModel = new DefaultListModel<>();
+    DefaultListModel<String> listModel = new DefaultListModel<>();
 
-        for (Product producto : carrito.getCarrito()) {
-            listModel.addElement(producto.toString()); // Asegúrate de que Product tenga un toString() adecuado
-        }
-
-        elementos.setModel(listModel);
+    for (Product producto : carrito.getCarrito()) {
+        listModel.addElement(producto.getName() + " - " + producto.getPrice() + "€");
     }
+
+    elementos.setModel(listModel);
+    // Habilitar la lista para poder seleccionar elementos
+    elementos.setEnabled(true);
+}
 
 
     /**
@@ -68,6 +70,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         elementos = new javax.swing.JList<>();
         seguirComprando = new javax.swing.JLabel();
+        Eliminar = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,6 +110,14 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
             }
         });
 
+        Eliminar.setForeground(new java.awt.Color(255, 255, 255));
+        Eliminar.setText("Eliminar");
+        Eliminar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                EliminarMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -115,8 +126,12 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
                 .addGap(81, 81, 81)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(carritoArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(seguirComprando, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(seguirComprando, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(Eliminar))
+                        .addComponent(carritoArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(125, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -127,7 +142,9 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(carritoArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
-                .addComponent(seguirComprando)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(seguirComprando)
+                    .addComponent(Eliminar))
                 .addContainerGap(90, Short.MAX_VALUE))
         );
 
@@ -153,6 +170,53 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         menu.setVisible(true);
         menu.setLocationRelativeTo(null);
     }//GEN-LAST:event_seguirComprandoMouseClicked
+
+    private void EliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EliminarMouseClicked
+        // TODO add your handling code here:
+        int indiceSeleccionado = elementos.getSelectedIndex();
+    
+    if (indiceSeleccionado != -1) { // Verificar que se ha seleccionado algo
+        // Obtener el producto seleccionado
+        Product productoSeleccionado = carrito.getCarrito().get(indiceSeleccionado);
+        
+        // Mostrar confirmación antes de eliminar
+        int confirmacion = javax.swing.JOptionPane.showConfirmDialog(
+                this, 
+                "¿Estás seguro de eliminar " + productoSeleccionado.getName() + " del carrito?",
+                "Confirmar eliminación",
+                javax.swing.JOptionPane.YES_NO_OPTION);
+        
+        if (confirmacion == javax.swing.JOptionPane.YES_OPTION) {
+            // Eliminar de la base de datos
+            boolean eliminado = sql.eliminarProductoDelCarrito(idCliente, productoSeleccionado.getId());
+            
+            if (eliminado) {
+                // Eliminar del ArrayList local
+                carrito.getCarrito().remove(indiceSeleccionado);
+                
+                // Actualizar la visualización
+                mostrarProductosEnCarrito();
+                
+                // Informar al usuario
+                javax.swing.JOptionPane.showMessageDialog(
+                        this, 
+                        "Producto eliminado del carrito correctamente.");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(
+                        this, 
+                        "No se pudo eliminar el producto del carrito.",
+                        "Error",
+                        javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(
+                this, 
+                "Por favor, seleccione un producto para eliminar.",
+                "Selección requerida",
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+    }
+    }//GEN-LAST:event_EliminarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -180,6 +244,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Eliminar;
     private javax.swing.JPanel carritoArea;
     private javax.swing.JList<String> elementos;
     private javax.swing.JLabel jLabel1;

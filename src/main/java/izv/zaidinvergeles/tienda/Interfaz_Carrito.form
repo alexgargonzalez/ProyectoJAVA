@@ -50,8 +50,14 @@
                   <EmptySpace min="-2" pref="81" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel1" min="-2" pref="279" max="-2" attributes="0"/>
-                      <Component id="carritoArea" min="-2" max="-2" attributes="0"/>
-                      <Component id="seguirComprando" alignment="0" min="-2" pref="163" max="-2" attributes="0"/>
+                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="seguirComprando" min="-2" pref="163" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="Eliminar" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="carritoArea" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace pref="125" max="32767" attributes="0"/>
               </Group>
@@ -65,7 +71,10 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="carritoArea" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                  <Component id="seguirComprando" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="seguirComprando" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="Eliminar" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace pref="90" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -138,6 +147,17 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="seguirComprandoMouseClicked"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="Eliminar">
+          <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Eliminar"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="EliminarMouseClicked"/>
           </Events>
         </Component>
       </SubComponents>
