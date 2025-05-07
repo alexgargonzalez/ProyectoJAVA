@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -115,17 +116,27 @@ public class Menu extends javax.swing.JFrame {
     }
 
     private void agregarProductoAlCarrito(Product producto) {
-        // Implementar la lógica para agregar el producto al carrito
-        consultas consulta = new consultas();
+       // Añadir el producto al carrito en la base de datos
+    consultas consulta = new consultas();
+    int idCliente = consulta.getIdCliente();
+    
+    // Guardar el producto en el carrito de la base de datos
+    boolean exito = consulta.agregarProductoAlCarrito(idCliente, producto.getId());
+    
+    if (exito) {
+        // Mostrar mensaje de confirmación con el nombre del producto
+        JOptionPane.showMessageDialog(this, 
+            "HAS AÑADIDO " + producto.getName() + " AL CARRITO", 
+            "Producto Añadido", 
+            JOptionPane.INFORMATION_MESSAGE);
         
-        // Usamos el ID del cliente actual para agregar el producto a su carrito en la BD
-        boolean agregado = consulta.agregarProductoAlCarrito(idCliente, producto.getId());
-        
-        if (agregado) {
-            System.out.println("Producto agregado al carrito: " + producto.getName() + " para el cliente ID: " + idCliente);
-        } else {
-            System.out.println("Error al agregar producto al carrito.");
-        }
+        System.out.println("Producto agregado al carrito: " + producto.getName());
+    } else {
+        JOptionPane.showMessageDialog(this, 
+            "No se pudo añadir " + producto.getName() + " al carrito", 
+            "Error", 
+            JOptionPane.ERROR_MESSAGE);
+    }
     }
 
 

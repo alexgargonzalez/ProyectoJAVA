@@ -7,6 +7,7 @@ package izv.zaidinvergeles.tienda;
 import izv.zaidinvergeles.tienda.Carrito;
 import izv.zaidinvergeles.tienda.Menu;
 import izv.zaidinvergeles.tienda.Product;
+import izv.zaidinvergeles.tienda.mysqlconnector.ConexionDB;
 import izv.zaidinvergeles.tienda.mysqlconnector.consultas;
 import javax.swing.DefaultListModel;
 
@@ -237,8 +238,204 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
 
     private void Eliminar1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Eliminar1MouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_Eliminar1MouseClicked
+        // Verificar si hay productos en el carrito
+    if (carrito.getCarrito().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "No hay productos en el carrito para realizar la compra.",
+            "Carrito vacío",
+            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+    
+    // Preguntar confirmación al usuario
+    int confirmacion = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "¿Deseas finalizar la compra y generar la factura?",
+        "Confirmar compra",
+        javax.swing.JOptionPane.YES_NO_OPTION);
+    
+    if (confirmacion == javax.swing.JOptionPane.YES_OPTION) {
+        // Obtener el nombre del cliente para la factura
+        String nombreCliente = obtenerNombreCliente(idCliente);
+        
+        // Generar el PDF de la factura
+        String rutaPDF = PDFGenerator.generarPDFCompra(carrito.getCarrito(), idCliente, nombreCliente);
+        
+        if (rutaPDF != null) {
+            // Registrar la compra en la base de datos
+            boolean compraRegistrada = registrarCompraEnBD();
+            
+            if (compraRegistrada) {
+                // Vaciar el carrito en la base de datos
+                boolean carritoVaciado = vaciarCarritoEnBD();
+                
+                if (carritoVaciado) {
+                    // Vaciar el carrito local
+                    carrito.vaciarCarrito();
+                    
+                    // Actualizar la vista
+                    mostrarProductosEnCarrito();
+                    
+                    // Mostrar mensaje de éxito
+                    javax.swing.JOptionPane.showMessageDialog(
+                        this,
+                        "Compra realizada con éxito.\nLa factura se ha guardado en: " + rutaPDF,
+                        "Compra exitosa",
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    
+                    // Preguntar si desea abrir el PDF
+                    int abrirPDF = javax.swing.JOptionPane.showConfirmDialog(
+                        this,
+                        "¿Deseas abrir la factura en PDF?",
+                        "Abrir factura",
+                        javax.swing.JOptionPane.YES_NO_OPTION);
+                    
+                    if (abrirPDF == javax.swing.JOptionPane.YES_OPTION) {
+                        try {
+                            java.awt.Desktop.getDesktop().open(new java.io.File(rutaPDF));
+                        } catch (java.io.IOException e) {
+                            javax.swing.JOptionPane.showMessageDialog(
+                                this,
+                                "No se pudo abrir el archivo PDF. Ruta: " + rutaPDF,
+                                "Error",
+                                javax.swing.JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+    }//GEN-LAST:event_Eliminar1MouseClicked
+private String obtenerNombreCliente(int idCliente) {
+    // Por defecto usamos "Cliente" en caso de error
+    String nombreCliente = "Cliente";
+    
+    try {
+        // Usar la conexión a la base de datos
+        ConexionDB db = new ConexionDB();
+        java.sql.Connection conn = db.conectar();
+        
+        // Preparar consulta
+        String sql = "SELECT nombre FROM clients WHERE id = ?";
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setInt(1, idCliente);
+        
+        // Ejecutar consulta
+        java.sql.ResultSet rs = pst.executeQuery();
+        
+        // Obtener resultado
+        if (rs.next()) {
+            nombreCliente = rs.getString("nombre");
+        }
+        
+        // Cerrar recursos
+        rs.close();
+        pst.close();
+        conn.close();
+        
+    } catch (java.sql.SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return nombreCliente;
+}
+
+// Método para registrar la compra en la base de datos
+private boolean registrarCompraEnBD() {
+    boolean resultado = false;
+    double total = carrito.getPrecioTotal();
+    
+    try {
+        // Usar la conexión a la base de datos
+        ConexionDB db = new ConexionDB();
+        java.sql.Connection conn = db.conectar();
+        
+        // Preparar consulta para insertar en tabla compras (asumiendo que tienes esta tabla)
+        String sql = "INSERT INTO compras (id_cliente, fecha, total) VALUES (?, NOW(), ?)";
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
+        pst.setInt(1, idCliente);
+        pst.setDouble(2, total);
+        
+        // Ejecutar consulta
+        int filasAfectadas = pst.executeUpdate();
+        
+        if (filasAfectadas > 0) {
+            // Obtener el ID de la compra generado
+            java.sql.ResultSet rs = pst.getGeneratedKeys();
+            if (rs.next()) {
+                int idCompra = rs.getInt(1);
+                
+                // Registrar cada producto en la tabla detalle_compra (asumiendo que tienes esta tabla)
+                for (Product producto : carrito.getCarrito()) {
+                    String sqlDetalle = "INSERT INTO detalle_compra (id_compra, id_producto, precio) VALUES (?, ?, ?)";
+                    java.sql.PreparedStatement pstDetalle = conn.prepareStatement(sqlDetalle);
+                    pstDetalle.setInt(1, idCompra);
+                    pstDetalle.setInt(2, producto.getId());
+                    pstDetalle.setDouble(3, producto.getPrice());
+                    pstDetalle.executeUpdate();
+                    pstDetalle.close();
+                }
+                
+                resultado = true;
+            }
+            rs.close();
+        }
+        
+        // Cerrar recursos
+        pst.close();
+        conn.close();
+        
+    } catch (java.sql.SQLException e) {
+        e.printStackTrace();
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Error al registrar la compra: " + e.getMessage(),
+            "Error",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+    
+    return resultado;
+}
+
+// Método para vaciar el carrito en la base de datos
+private boolean vaciarCarritoEnBD() {
+    boolean resultado = false;
+    
+    try {
+        // Usar la conexión a la base de datos
+        ConexionDB db = new ConexionDB();
+        java.sql.Connection conn = db.conectar();
+        
+        // Preparar consulta para eliminar todos los productos del carrito del cliente
+        String sql = "DELETE FROM carrito WHERE id_cliente = ?";
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setInt(1, idCliente);
+        
+        // Ejecutar consulta
+        int filasAfectadas = pst.executeUpdate();
+        
+        // Si se eliminó al menos una fila, consideramos exitoso
+        if (filasAfectadas >= 0) {
+            resultado = true;
+        }
+        
+        // Cerrar recursos
+        pst.close();
+        conn.close();
+        
+    } catch (java.sql.SQLException e) {
+        e.printStackTrace();
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Error al vaciar el carrito: " + e.getMessage(),
+            "Error",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+    
+    return resultado;
+}
     /**
      * @param args the command line arguments
      */

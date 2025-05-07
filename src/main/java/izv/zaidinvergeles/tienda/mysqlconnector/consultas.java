@@ -278,28 +278,24 @@ public class consultas {
 
     // Método para agregar producto al carrito de un cliente en la base de datos
     public boolean agregarProductoAlCarrito(int idCliente, int idProducto) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        boolean resultado = false;
+    Connection conn = null;
+    PreparedStatement ps = null;
+    
+    try {
+        conn = new ConexionDB().conectar();
+        String sql = "INSERT INTO carrito (id_cliente, id_producto) VALUES (?, ?)";
+        ps = conn.prepareStatement(sql);
+        ps.setInt(1, idCliente);
+        ps.setInt(2, idProducto);
         
-        try {
-            conn = new ConexionDB().conectar();
-            String sql = "INSERT INTO carrito (id_cliente, id_producto) VALUES (?, ?)";
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, idCliente);
-            ps.setInt(2, idProducto);
-            
-            int filasAfectadas = ps.executeUpdate();
-            if (filasAfectadas > 0) {
-                resultado = true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            ConexionDB.cerrarConexion(conn, ps, null);
-        }
-        
-        return resultado;
+        int filasAfectadas = ps.executeUpdate();
+        return filasAfectadas > 0;
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error al agregar producto al carrito: " + e.getMessage());
+        return false;
+    } finally {
+        ConexionDB.cerrarConexion(conn, ps, null);
     }
+}
     
 }
