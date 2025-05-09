@@ -16,130 +16,169 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 /**
- *
+ * Clase Menu que representa la interfaz principal de la tienda donde
+ * se muestran los productos disponibles para comprar.
  * @author alfon
  */
 public class Menu extends javax.swing.JFrame {
 
     /**
-     * Creates new form Menu
+     * Lista de productos cargados desde la base de datos
      */
- 
-   private java.util.List<Product> listaProductos; // Productos desde BD
+    private java.util.List<Product> listaProductos;
+    
+    /**
+     * Panel donde se mostrarán los productos
+     */
     private javax.swing.JPanel panelProductos;
-    private int idCliente; // ID del cliente actual
+    
+    /**
+     * ID del cliente que ha iniciado sesión
+     */
+    private int idCliente;
+    
+    /**
+     * Objeto para realizar consultas a la base de datos
+     */
     consultas consulta = new consultas();
 
-
+    /**
+     * Constructor de la clase Menu.
+     * Inicializa los componentes, carga el ID del cliente actual,
+     * los iconos y los productos desde la base de datos.
+     */
     public Menu() {
         initComponents();
         // Obtenemos el ID del cliente de la clase consultas
         this.idCliente = consulta.getIdCliente();
         System.out.println("ID del cliente en Menu: " + idCliente);
         
-        cargarIconos(); // Llamar a cargarIconos
+        cargarIconos();           // Cargar los iconos para los menús
         cargarProductosDesdeBD(); // Cargar productos desde la base de datos
-        mostrarProductos();
+        mostrarProductos(); 
+        jMenu1.setText(consulta.obtenerNombreClientePorId(consulta.getIdCliente()));
     }
 
+    /**
+     * Método para cargar los iconos en los menús y elementos de la interfaz.
+     * Busca los recursos de imagen y los asigna a cada componente.
+     */
     private void cargarIconos() {
-    // Cargar icono de usuario
-    URL userIconURL = getClass().getResource("/img/usuario.png");
-    if (userIconURL != null) {
-        jMenu1.setIcon(new javax.swing.ImageIcon(userIconURL));
-    } else {
-        System.err.println("No se pudo cargar el icono de usuario.");
+        // Cargar icono de usuario
+        URL userIconURL = getClass().getResource("/img/usuario.png");
+        if (userIconURL != null) {
+            jMenu1.setIcon(new javax.swing.ImageIcon(userIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono de usuario.");
+        }
+
+       
+
+        // Cargar icono de carrito
+        URL cartIconURL = getClass().getResource("/img/carrito-de-compras.png");
+        if (cartIconURL != null) {
+            jMenu3.setIcon(new javax.swing.ImageIcon(cartIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono del carrito.");
+        }
+
+        // Cargar icono de ir al carrito
+        URL goToCartIconURL = getClass().getResource("/img/carro-de-la-carretilla.png");
+        if (goToCartIconURL != null) {
+            ir_Carrito.setIcon(new javax.swing.ImageIcon(goToCartIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono de ir al carrito.");
+        }
+
+        // Cargar icono de salir
+        URL exitIconURL = getClass().getResource("/img/salida.png");
+        if (exitIconURL != null) {
+            jMenu4.setIcon(new javax.swing.ImageIcon(exitIconURL));
+        } else {
+            System.err.println("No se pudo cargar el icono de salir.");
+        }
     }
 
-    // Cargar icono de configuraciones
-    URL configIconURL = getClass().getResource("/img/configuraciones.png");
-    if (configIconURL != null) {
-        jMenuItem3.setIcon(new javax.swing.ImageIcon(configIconURL));
-    } else {
-        System.err.println("No se pudo cargar el icono de configuraciones.");
-    }
-
-    // Cargar icono de carrito
-    URL cartIconURL = getClass().getResource("/img/carrito-de-compras.png");
-    if (cartIconURL != null) {
-        jMenu3.setIcon(new javax.swing.ImageIcon(cartIconURL));
-    } else {
-        System.err.println("No se pudo cargar el icono del carrito.");
-    }
-
-    // Cargar icono de ir al carrito
-    URL goToCartIconURL = getClass().getResource("/img/carro-de-la-carretilla.png");
-    if (goToCartIconURL != null) {
-        ir_Carrito.setIcon(new javax.swing.ImageIcon(goToCartIconURL));
-    } else {
-        System.err.println("No se pudo cargar el icono de ir al carrito.");
-    }
-
-    // Cargar icono de salir
-    URL exitIconURL = getClass().getResource("/img/salida.png");
-    if (exitIconURL != null) {
-        jMenu4.setIcon(new javax.swing.ImageIcon(exitIconURL));
-    } else {
-        System.err.println("No se pudo cargar el icono de salir.");
-    }
-}
-
+    /**
+     * Método para cargar los productos desde la base de datos.
+     * Utiliza la clase consultas para obtener los productos.
+     */
     private void cargarProductosDesdeBD() {
         listaProductos = new ArrayList<>();
         consultas consulta = new consultas();
-        listaProductos = consulta.obtenerProductos(); // Método que debe implementarse en la clase consultas
+        listaProductos = consulta.obtenerProductos(); // Obtiene los productos desde la BD
     }
 
+    /**
+     * Método para mostrar los productos en la interfaz gráfica.
+     * Crea un panel para cada producto con su nombre y botón para añadir al carrito.
+     */
     private void mostrarProductos() {
+        // Crear un nuevo panel con layout de cuadrícula
         panelProductos = new JPanel();
-        panelProductos.setLayout(new GridLayout(0, 1, 10, 10));
+        panelProductos.setLayout(new GridLayout(0, 1, 10, 10)); // Una columna, filas infinitas, espaciado 10x10
 
+        // Recorrer la lista de productos
         for (Product producto : listaProductos) {
+            // Crear un panel para cada producto
             JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());
 
+            // Crear etiqueta con la información del producto
             JLabel lblNombre = new JLabel(producto.toString());
+            
+            // Crear botón para añadir el producto al carrito
             JButton btnAgregar = new JButton("Añadir al carrito");
 
+            // Añadir listener al botón para manejar el evento de clic
             btnAgregar.addActionListener(e -> agregarProductoAlCarrito(producto));
 
+            // Añadir componentes al panel del producto
             panel.add(lblNombre, BorderLayout.CENTER);
             panel.add(btnAgregar, BorderLayout.EAST);
+            
+            // Añadir el panel del producto al panel principal
             panelProductos.add(panel);
         }
 
+        // Limpiar el panel principal y añadir el panel de productos con scroll
         jPanel1.removeAll();
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(new JScrollPane(panelProductos), BorderLayout.CENTER);
+        
+        // Actualizar la interfaz
         jPanel1.revalidate();
         jPanel1.repaint();
     }
 
+    /**
+     * Método para agregar un producto al carrito del cliente actual.
+     * @param producto El producto a añadir al carrito
+     */
     private void agregarProductoAlCarrito(Product producto) {
-       // Añadir el producto al carrito en la base de datos
-    consultas consulta = new consultas();
-    int idCliente = consulta.getIdCliente();
-    
-    // Guardar el producto en el carrito de la base de datos
-    boolean exito = consulta.agregarProductoAlCarrito(idCliente, producto.getId());
-    
-    if (exito) {
-        // Mostrar mensaje de confirmación con el nombre del producto
-        JOptionPane.showMessageDialog(this, 
-            "HAS AÑADIDO " + producto.getName() + " AL CARRITO", 
-            "Producto Añadido", 
-            JOptionPane.INFORMATION_MESSAGE);
+        // Obtener la instancia de consultas y el ID del cliente actual
+        consultas consulta = new consultas();
+        int idCliente = consulta.getIdCliente();
         
-        System.out.println("Producto agregado al carrito: " + producto.getName());
-    } else {
-        JOptionPane.showMessageDialog(this, 
-            "No se pudo añadir " + producto.getName() + " al carrito", 
-            "Error", 
-            JOptionPane.ERROR_MESSAGE);
+        // Guardar el producto en el carrito de la base de datos
+        boolean exito = consulta.agregarProductoAlCarrito(idCliente, producto.getId());
+        
+        if (exito) {
+            // Mostrar mensaje de confirmación con el nombre del producto
+            JOptionPane.showMessageDialog(this, 
+                "HAS AÑADIDO " + producto.getName() + " AL CARRITO", 
+                "Producto Añadido", 
+                JOptionPane.INFORMATION_MESSAGE);
+            
+            System.out.println("Producto agregado al carrito: " + producto.getName());
+        } else {
+            // Mostrar mensaje de error si no se pudo añadir
+            JOptionPane.showMessageDialog(this, 
+                "No se pudo añadir " + producto.getName() + " al carrito", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
-    }
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -153,7 +192,6 @@ public class Menu extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         ir_Carrito = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
@@ -182,22 +220,11 @@ public class Menu extends javax.swing.JFrame {
         jMenuBar1.setPreferredSize(new java.awt.Dimension(300, 50));
 
         jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/usuario.png"))); // NOI18N
-        jMenu1.setText("Usuario");
         jMenu1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jMenu1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         jMenu1.setIconTextGap(20);
         jMenu1.setPreferredSize(new java.awt.Dimension(240, 40));
         jMenu1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/img/usuario.png"))); // NOI18N
-
-        jMenuItem3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/configuraciones.png"))); // NOI18N
-        jMenuItem3.setText("Configuración");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem3);
-
         jMenuBar1.add(jMenu1);
 
         jMenu3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/carrito-de-compras.png"))); // NOI18N
@@ -265,22 +292,65 @@ public class Menu extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
+        // Mostrar confirmación de cierre de sesión
+        int respuesta = JOptionPane.showConfirmDialog(
+            this,
+            "¿Estás seguro de que quieres cerrar sesión?",
+            "Confirmar cierre de sesión",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        );
+        
+        // Si el usuario confirma, cerramos sesión
+        if (respuesta == JOptionPane.YES_OPTION) {
+            // Resetear el ID del cliente conectado
+            consultas.setIdCliente(-1);
+            
+            // Cerrar esta ventana
+            this.dispose();
+            
+            // Abrir ventana de login
+            Login ventanaLogin = new Login();
+            ventanaLogin.setVisible(true);
+            ventanaLogin.setLocationRelativeTo(null);
+            
+            JOptionPane.showMessageDialog(
+                ventanaLogin,
+                "Has cerrado sesión correctamente",
+                "Sesión finalizada",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
+        // Mostrar confirmación antes de salir
+        int respuesta = JOptionPane.showConfirmDialog(
+            this,
+            "¿Estás seguro de que quieres salir de la aplicación?",
+            "Confirmar salida",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        );
+        
+        // Si el usuario confirma, cerramos la aplicación
+        if (respuesta == JOptionPane.YES_OPTION) {
+            System.exit(0); // Cierra completamente la aplicación
+        }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
-
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void ir_CarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ir_CarritoActionPerformed
         // TODO add your handling code here:
+        // Ocultar la ventana actual
         this.setVisible(false);
-        consultas consulta = new consultas();
+        
+        // Crear nueva instancia de la interfaz del carrito
         Interfaz_Carrito carrito = new Interfaz_Carrito();
+        
+        // Mostrar la interfaz del carrito
         carrito.setVisible(true);
+        carrito.setLocationRelativeTo(null);
     }//GEN-LAST:event_ir_CarritoActionPerformed
 
     /**
@@ -326,7 +396,6 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

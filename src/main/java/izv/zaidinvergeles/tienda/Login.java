@@ -4,7 +4,6 @@
  */
 package izv.zaidinvergeles.tienda;
 
-import izv.zaidinvergeles.tienda.mysqlconnector.ConexionDB;
 import izv.zaidinvergeles.tienda.mysqlconnector.consultas;
 
 /**
@@ -167,8 +166,22 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        consultas conexion = new consultas();
-        conexion.consultarUsuario(userFORM.getText(), passwordFORM.getText());
+         // Verificar que ningún campo contenga valores negativos
+    String usuario = userFORM.getText();
+    String password = passwordFORM.getText();
+    
+    // Verificar si algún campo contiene el signo menos
+    if (usuario.contains("-") || password.contains("-")) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "No se permiten valores negativos en ningún campo", 
+            "Error de validación", 
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+        return; // Detener el proceso de login
+    }
+    
+    // Si todos los datos son válidos, continuar con el login
+    consultas conexion = new consultas();
+    conexion.consultarUsuario(usuario, password, this);
         
     }//GEN-LAST:event_jButton1ActionPerformed
 

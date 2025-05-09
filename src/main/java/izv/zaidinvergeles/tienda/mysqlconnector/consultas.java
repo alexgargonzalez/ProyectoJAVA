@@ -14,26 +14,57 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Clase que contiene los métodos para realizar operaciones en la base de datos
+ * relacionadas con productos, clientes y carritos de compra.
+ */
 public class consultas {
     
     // Almacenamos el ID del cliente conectado actualmente (estático para ser compartido en toda la aplicación)
     private static int idClienteActual;
 
+    /**
+     * Constructor con parámetro para inicializar el ID del cliente
+     * @param idCliente El ID del cliente a establecer
+     */
     public consultas(int idCliente) {
-        idClienteActual = idCliente;
+        // Validamos que el ID no sea menor a 0
+        if (idCliente < 0) {
+            JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+            idClienteActual = 0; // Valor predeterminado o seguro
+        } else {
+            idClienteActual = idCliente;
+        }
     }
 
+    /**
+     * Constructor vacío
+     */
     public consultas() {
     }
     
+    /**
+     * Método para obtener el ID del cliente actual
+     * @return El ID del cliente conectado actualmente
+     */
     public static int getIdCliente() {
         return idClienteActual;
     }
     
+    /**
+     * Método para establecer el ID del cliente actual
+     * @param id El nuevo ID del cliente
+     */
     public static void setIdCliente(int id) {
+        // Validamos que el ID no sea menor a 0
+        
         idClienteActual = id;
     }
     
+    /**
+     * Método para obtener todos los productos de la base de datos
+     * @return ArrayList con todos los productos
+     */
     public ArrayList<Product> obtenerProductos() {
         ArrayList<Product> productos = new ArrayList<>();
         Connection conn = null;
@@ -41,261 +72,589 @@ public class consultas {
         ResultSet rs = null;
 
         try {
-            conn = new ConexionDB().conectar(); // Usamos el método conectar()
-            String sql = "SELECT id, nombre, descripcion, precio FROM product"; // Consulta SQL para obtener productos
+            // Establecemos conexión a la base de datos
+            conn = new ConexionDB().conectar();
+            
+            // Preparamos consulta SQL para obtener productos
+            String sql = "SELECT id, nombre, descripcion, precio FROM product";
             ps = conn.prepareStatement(sql);
+            
+            // Ejecutamos la consulta
             rs = ps.executeQuery();
 
+            // Recorremos los resultados y creamos objetos Product
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String nombre = rs.getString("nombre");
                 String descripcion = rs.getString("descripcion");
                 double precio = rs.getDouble("precio");
+                
+                // Validamos que el ID y precio no sean negativos
+                if (id < 0) {
+                    JOptionPane.showMessageDialog(null, "Error: Se encontró un producto con ID negativo: " + id);
+                    continue; // Saltamos este producto
+                }
+                
+                if (precio < 0) {
+                    JOptionPane.showMessageDialog(null, "Error: Se encontró un producto con precio negativo: " + nombre);
+                    continue; // Saltamos este producto
+                }
+                
+                // Creamos el objeto producto y lo añadimos a la lista
                 Product producto = new Product(id, nombre, descripcion, precio);
-                productos.add(producto); // Agregar el producto a la lista
+                productos.add(producto);
             }
         } catch (SQLException e) {
+            // Mostramos mensaje de error si hay problemas
             JOptionPane.showMessageDialog(null, "Error al obtener productos: " + e.getMessage());
         } finally {
-            ConexionDB.cerrarConexion(conn, ps, rs); // Cerramos la conexión
+            // Cerramos todas las conexiones para liberar recursos
+            ConexionDB.cerrarConexion(conn, ps, rs);
         }
-        return productos; // Retornar la lista de productos
+        // Retornamos la lista de productos
+        return productos;
     }
     
+    /**
+     * Método para obtener todos los clientes de la base de datos
+     * @return ArrayList con todos los clientes
+     */
     public ArrayList<Client> getClientes() {
         ArrayList<Client> usuarios = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
         
-        try{
-             ConexionDB db = new ConexionDB();
-             Connection cn = db.conectar();
-             PreparedStatement pst = cn.prepareStatement("SELECT * FROM clients");
-             ResultSet rs = pst.executeQuery();
-             while(rs.next()){
-                 Client usuario = new Client();
-                 usuario.setId(rs.getString("id"));
-                 usuario.setName(rs.getString("nombre"));
-                 usuario.setEmail(rs.getString("email"));
-                 usuarios.add(usuario);
-                 
-             }
-        }catch(Exception e){
+        try {
+            // Creamos conexión a la base de datos
+            ConexionDB db = new ConexionDB();
+            conn = db.conectar();
             
+            // Preparamos consulta para obtener todos los clientes
+            pst = conn.prepareStatement("SELECT * FROM clients");
+            rs = pst.executeQuery();
+            
+            // Recorremos resultados y creamos objetos Client
+            while(rs.next()) {
+                Client usuario = new Client();
+                usuario.setId(rs.getString("id"));
+                usuario.setName(rs.getString("nombre"));
+                usuario.setEmail(rs.getString("email"));
+                
+                // Validamos que el ID no sea negativo
+                try {
+                    int idCliente = Integer.parseInt(usuario.getId());
+                    if (idCliente < 0) {
+                        JOptionPane.showMessageDialog(null, "Error: Se encontró un cliente con ID negativo: " + idCliente);
+                        continue; // Saltamos este cliente
+                    }
+                } catch (NumberFormatException e) {
+                    // Si el ID no es un número, mostramos error
+                    JOptionPane.showMessageDialog(null, "Error: ID de cliente inválido: " + usuario.getId());
+                    continue; // Saltamos este cliente
+                }
+                
+                usuarios.add(usuario);
+            }
+        } catch(Exception e) {
+            // Mostramos error si hay problemas
+            JOptionPane.showMessageDialog(null, "Error al obtener clientes: " + e.getMessage());
+        } finally {
+            // Cerramos todas las conexiones
+            ConexionDB.cerrarConexion(conn, pst, rs);
         }
 
         return usuarios;
     }
     
-    
+    /**
+     * Método para eliminar un cliente por su nombre
+     * @param nombreCliente Nombre del cliente a eliminar
+     */
     public void eliminarCliente(String nombreCliente) {
-        ConexionDB db = new ConexionDB();
-        String sql = "DELETE FROM clients WHERE nombre = ?";
-
-        try (Connection conexion = db.conectar();
-             PreparedStatement pst = conexion.prepareStatement(sql)) {
-
+        // Validamos que el nombre no esté vacío
+        if (nombreCliente == null || nombreCliente.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: El nombre del cliente no puede estar vacío");
+            return;
+        }
+        
+        Connection conexion = null;
+        PreparedStatement pst = null;
+        
+        try {
+            // Establecemos conexión
+            ConexionDB db = new ConexionDB();
+            conexion = db.conectar();
+            
+            // Preparamos consulta de eliminación
+            String sql = "DELETE FROM clients WHERE nombre = ?";
+            pst = conexion.prepareStatement(sql);
             pst.setString(1, nombreCliente);
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Cliente eliminado correctamente");
+            
+            // Ejecutamos la consulta
+            int filasAfectadas = pst.executeUpdate();
+            
+            if (filasAfectadas > 0) {
+                JOptionPane.showMessageDialog(null, "Cliente eliminado correctamente");
+            } else {
+                JOptionPane.showMessageDialog(null, "No se encontró el cliente para eliminar");
+            }
 
         } catch (SQLException e) {
+            // Mostramos error si hay problemas
             JOptionPane.showMessageDialog(null, "Error al eliminar cliente: " + e.getMessage());
+        } finally {
+            // Cerramos todas las conexiones
+            ConexionDB.cerrarConexion(conexion, pst, null);
         }
     }
     
-    public void guardarUsuario(Client cliente){
-    ConexionDB db = new ConexionDB();
-    String sql = "INSERT INTO clients(nombre, password_hash, email) VALUES (?, ?, ?)";
-
-    try (Connection conexion = db.conectar();
-         PreparedStatement pst = conexion.prepareStatement(sql)) {
-
-        pst.setString(1, cliente.getName());
-        pst.setString(2, cliente.getPassword());
-        pst.setString(3, cliente.getEmail());
+    /**
+     * Método para guardar un nuevo cliente en la base de datos
+     * @param cliente Objeto Client con los datos del cliente a guardar
+     */
+    public void guardarUsuario(Client cliente) {
+        // Validamos que los campos no estén vacíos
+        if (cliente.getName() == null || cliente.getName().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: El nombre del cliente no puede estar vacío");
+            return;
+        }
         
+        if (cliente.getPassword() == null || cliente.getPassword().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: La contraseña no puede estar vacía");
+            return;
+        }
+        
+        if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: El email no puede estar vacío");
+            return;
+        }
+        
+        // Validamos el formato del email (básico)
+        if (!cliente.getEmail().contains("@") || !cliente.getEmail().contains(".")) {
+            JOptionPane.showMessageDialog(null, "Error: El formato del email es inválido");
+            return;
+        }
 
-        pst.executeUpdate();
-        JOptionPane.showMessageDialog(null, "Guardado correctamente");
-
-    } catch(SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al guardar: " + "el usuario ya está creado");
-    }
-}
-    
-
-    
-    public int devolverIdCliente(String nombreCliente){
-        ConexionDB db = new ConexionDB();
-        int idDelCliente = -1;
+        Connection conexion = null;
+        PreparedStatement pst = null;
+        
         try {
-            Connection cn = db.conectar();
-            PreparedStatement pst = cn.prepareStatement("SELECT id FROM clients WHERE nombre = ?");
+            // Establecemos conexión
+            ConexionDB db = new ConexionDB();
+            conexion = db.conectar();
+            
+            // Preparamos consulta de inserción
+            String sql = "INSERT INTO clients(nombre, password_hash, email) VALUES (?, ?, ?)";
+            pst = conexion.prepareStatement(sql);
+            
+            // Establecemos parámetros de la consulta
+            pst.setString(1, cliente.getName());
+            pst.setString(2, cliente.getPassword());
+            pst.setString(3, cliente.getEmail());
+            
+            // Ejecutamos la consulta
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Guardado correctamente");
+
+        } catch(SQLException e) {
+            // Mostramos error específico para usuario duplicado
+            JOptionPane.showMessageDialog(null, "Error al guardar: " + "el usuario ya está creado");
+        } finally {
+            // Cerramos todas las conexiones
+            ConexionDB.cerrarConexion(conexion, pst, null);
+        }
+    }
+    
+    /**
+     * Método para obtener el ID de un cliente por su nombre
+     * @param nombreCliente Nombre del cliente a buscar
+     * @return ID del cliente o -1 si no se encuentra
+     */
+    public int devolverIdCliente(String nombreCliente) {
+        // Validamos que el nombre no esté vacío
+        if (nombreCliente == null || nombreCliente.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: El nombre del cliente no puede estar vacío");
+            return -1;
+        }
+        
+        Connection cn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        int idDelCliente = -1;
+        
+        try {
+            // Establecemos conexión
+            ConexionDB db = new ConexionDB();
+            cn = db.conectar();
+            
+            // Preparamos consulta
+            pst = cn.prepareStatement("SELECT id FROM clients WHERE nombre = ?");
             pst.setString(1, nombreCliente);
-            ResultSet rs = pst.executeQuery();
+            
+            // Ejecutamos consulta
+            rs = pst.executeQuery();
+            
+            // Si hay resultados, obtenemos el ID
             if (rs.next()) {
                 idDelCliente = rs.getInt("id");
+                
+                // Validamos que el ID no sea negativo
+                
+            } else {
+                JOptionPane.showMessageDialog(null, "No se encontró el cliente: " + nombreCliente);
             }
         } catch (Exception e) {
+            // Mostramos error
+            JOptionPane.showMessageDialog(null, "Error al buscar cliente: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            // Cerramos todas las conexiones
+            ConexionDB.cerrarConexion(cn, pst, rs);
         }
+        
         return idDelCliente;
     }
     
-    public void consultarUsuario(String user, String pass) {
-    ConexionDB db = new ConexionDB();
-    String usuarioCorrecto = null;
-    String passCorrecto = null;
-
+    /**
+     * Método para verificar credenciales de usuario y realizar login
+     * @param user Nombre de usuario
+     * @param pass Contraseña del usuario
+     */
+   public void consultarUsuario(String user, String pass, Login loginn) {
+    // Validamos que los campos no estén vacíos
+    if (user == null || user.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Error: El nombre de usuario no puede estar vacío");
+        return;
+    }
+    
+    if (pass == null || pass.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Error: La contraseña no puede estar vacía");
+        return;
+    }
+       
+    Connection cn = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
     try {
-        Connection cn = db.conectar();
-        PreparedStatement pst = cn.prepareStatement("SELECT id, nombre, password_hash FROM clients WHERE nombre = ?");
+        // Establecemos conexión
+        ConexionDB db = new ConexionDB();
+        cn = db.conectar();
+        
+        // Preparamos consulta para buscar usuario
+        pst = cn.prepareStatement("SELECT id, nombre, password_hash FROM clients WHERE nombre = ?");
         pst.setString(1, user);
-        ResultSet rs = pst.executeQuery();
-
+        
+        // Ejecutamos consulta
+        rs = pst.executeQuery();
+        // Verificamos credenciales si hay resultados
         if (rs.next()) {
-            usuarioCorrecto = rs.getString("nombre");
-            passCorrecto = rs.getString("password_hash");
+            String usuarioCorrecto = rs.getString("nombre");
+            String passCorrecto = rs.getString("password_hash");
             int clienteId = rs.getInt("id");
-
+            
+            // Validamos que el ID no sea negativo
+            
+            
+            // Verificamos que usuario y contraseña coincidan
             if (user.equals(usuarioCorrecto) && pass.equals(passCorrecto)) {
-                // Aquí asignamos el ID del cliente a la variable estática
+                // Asignamos el ID del cliente a la variable estática
                 setIdCliente(clienteId);
                 
+                // Mostramos mensaje de bienvenida
                 JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido " + user);
                 System.out.println("ID del cliente conectado: " + idClienteActual);
                 
-                Login entrar = new Login();
+                // Cerramos primero la ventana de login
+                loginn.dispose();
+                
+                // Luego abrimos el menú principal (después de cerrar la ventana de login)
                 Menu menu = new Menu();
-                entrar.setVisible(false);
                 menu.setVisible(true);
                 menu.setLocationRelativeTo(null);
+                
+                return; // Salimos del método tras login exitoso
             } else {
                 JOptionPane.showMessageDialog(null, "Contraseña incorrecta.");
             }
         } else {
             JOptionPane.showMessageDialog(null, "Usuario no encontrado.");
         }
-
     } catch (Exception e) {
+        // Mostramos error
         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+    } finally {
+        // Cerramos todas las conexiones
+        ConexionDB.cerrarConexion(cn, pst, rs);
     }   
 }
     
-  public boolean consultarAdmin(String user, String pass, String passAdmin) {
-    ConexionDB newConnection = new ConexionDB();
-    String usuarioCorrecto = null;
-    String contraseñaCorrecta = null;
-    String claveCorrecta = null;
-    boolean loginExitoso = false;
-    
-    try {
-        Connection cn = newConnection.conectar();
-        PreparedStatement pst = cn.prepareStatement("SELECT nombre, password_hash, password_admin FROM administrator WHERE password_admin= ? ");
-        pst.setString(1, passAdmin);
-        ResultSet rs = pst.executeQuery();
+    /**
+     * Método para verificar credenciales de administrador
+     * @param user Nombre de usuario administrador
+     * @param pass Contraseña del administrador
+     * @param passAdmin Clave especial de administrador
+     * @return true si el login fue exitoso, false en caso contrario
+     */
+    public boolean consultarAdmin(String user, String pass, String passAdmin) {
+        // Validamos que los campos no estén vacíos
+        if (user == null || user.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: El nombre de usuario admin no puede estar vacío");
+            return false;
+        }
         
-        if (rs.next()) {
-            usuarioCorrecto = rs.getString("nombre");
-            contraseñaCorrecta = rs.getString("password_hash");
-            claveCorrecta = rs.getString("password_admin");
+        if (pass == null || pass.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: La contraseña admin no puede estar vacía");
+            return false;
+        }
+        
+        if (passAdmin == null || passAdmin.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: La clave especial admin no puede estar vacía");
+            return false;
+        }
+        
+        Connection cn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        String usuarioCorrecto = null;
+        String contraseñaCorrecta = null;
+        String claveCorrecta = null;
+        boolean loginExitoso = false;
+        
+        try {
+            // Establecemos conexión
+            ConexionDB newConnection = new ConexionDB();
+            cn = newConnection.conectar();
             
-            if (usuarioCorrecto.equals(user) && contraseñaCorrecta.equals(pass) && claveCorrecta.equals(passAdmin)) {
-                JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido Sr " + user);
-                loginExitoso = true;
+            // Preparamos consulta para administrador
+            pst = cn.prepareStatement("SELECT nombre, password_hash, password_admin FROM administrator WHERE password_admin= ? ");
+            pst.setString(1, passAdmin);
+            
+            // Ejecutamos consulta
+            rs = pst.executeQuery();
+            
+            // Verificamos credenciales si hay resultados
+            if (rs.next()) {
+                usuarioCorrecto = rs.getString("nombre");
+                contraseñaCorrecta = rs.getString("password_hash");
+                claveCorrecta = rs.getString("password_admin");
+                
+                // Verificamos que todos los datos coincidan
+                if (usuarioCorrecto.equals(user) && contraseñaCorrecta.equals(pass) && claveCorrecta.equals(passAdmin)) {
+                    JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido Sr " + user);
+                    loginExitoso = true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "El conjunto de datos introducidos es incorrecto");
+                }
             } else {
-                JOptionPane.showMessageDialog(null, "El conjunto de datos introducidos es incorrecto");
+                JOptionPane.showMessageDialog(null, "Usuario no encontrado");
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Usuario no encontrado");
+        } catch (Exception e) {
+            // Mostramos error
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        } finally {
+            // Cerramos todas las conexiones
+            ConexionDB.cerrarConexion(cn, pst, rs);
         }
         
-        // Cerrar recursos
-        rs.close();
-        pst.close();
-        cn.close();
-        
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        return loginExitoso;
     }
     
-    return loginExitoso;
-}
-    
+    /**
+     * Método para eliminar un producto del carrito de un cliente
+     * @param idCliente ID del cliente propietario del carrito
+     * @param idProducto ID del producto a eliminar
+     * @return true si se eliminó correctamente, false en caso contrario
+     */
     public boolean eliminarProductoDelCarrito(int idCliente, int idProducto) {
-    Connection conn = null;
-    PreparedStatement ps = null;
-    boolean resultado = false;
-    
-    try {
-        conn = new ConexionDB().conectar();
-        String sql = "DELETE FROM carrito WHERE id_cliente = ? AND id_producto = ? LIMIT 1";
-        ps = conn.prepareStatement(sql);
-        ps.setInt(1, idCliente);
-        ps.setInt(2, idProducto);
-        
-        int filasAfectadas = ps.executeUpdate();
-        if (filasAfectadas > 0) {
-            resultado = true;
+        // Validamos que los IDs no sean negativos
+        if (idCliente < 0) {
+            JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+            return false;
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error al eliminar el producto del carrito: " + e.getMessage());
-    } finally {
-        ConexionDB.cerrarConexion(conn, ps, null);
+        
+        if (idProducto < 0) {
+            JOptionPane.showMessageDialog(null, "Error: El ID del producto no puede ser negativo");
+            return false;
+        }
+        
+        Connection conn = null;
+        PreparedStatement ps = null;
+        boolean resultado = false;
+        
+        try {
+            // Establecemos conexión
+            conn = new ConexionDB().conectar();
+            
+            // Preparamos consulta de eliminación (solo elimina una unidad)
+            String sql = "DELETE FROM carrito WHERE id_cliente = ? AND id_producto = ? LIMIT 1";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idCliente);
+            ps.setInt(2, idProducto);
+            
+            // Ejecutamos consulta y verificamos resultado
+            int filasAfectadas = ps.executeUpdate();
+            if (filasAfectadas > 0) {
+                resultado = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "No se encontró el producto en el carrito");
+            }
+        } catch (SQLException e) {
+            // Mostramos error
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al eliminar el producto del carrito: " + e.getMessage());
+        } finally {
+            // Cerramos todas las conexiones
+            ConexionDB.cerrarConexion(conn, ps, null);
+        }
+        
+        return resultado;
     }
     
-    return resultado;
-}
-    
+    /**
+     * Método para obtener todos los productos en el carrito de un cliente
+     * @param idCliente ID del cliente propietario del carrito
+     * @return ArrayList con los productos en el carrito
+     */
     public ArrayList<Product> obtenerProductosDelCarrito(int idCliente) {
-    ArrayList<Product> productos = new ArrayList<>();
+        // Validamos que el ID del cliente no sea negativo
+        if (idCliente < 0) {
+            JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+            return new ArrayList<>(); // Retornamos lista vacía
+        }
+        
+        ArrayList<Product> productos = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            // Establecemos conexión
+            conn = new ConexionDB().conectar();
+            
+            // Preparamos consulta JOIN entre carrito y productos
+            String sql = "SELECT p.id, p.nombre, p.descripcion, p.precio FROM carrito c JOIN product p ON c.id_producto = p.id WHERE c.id_cliente = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idCliente);
+            
+            // Ejecutamos consulta
+            rs = ps.executeQuery();
+
+            // Recorremos resultados y creamos objetos Product
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nombre = rs.getString("nombre");
+                String descripcion = rs.getString("descripcion");
+                double precio = rs.getDouble("precio");
+                
+                // Validamos que ID y precio no sean negativos
+                if (id < 0) {
+                    JOptionPane.showMessageDialog(null, "Error: Se encontró un producto con ID negativo: " + id);
+                    continue; // Saltamos este producto
+                }
+                
+                if (precio < 0) {
+                    JOptionPane.showMessageDialog(null, "Error: Se encontró un producto con precio negativo: " + nombre);
+                    continue; // Saltamos este producto
+                }
+                
+                // Creamos objeto producto y lo añadimos a la lista
+                Product producto = new Product(id, nombre, descripcion, precio);
+                productos.add(producto);
+            }
+        } catch (Exception e) {
+            // Mostramos error
+            JOptionPane.showMessageDialog(null, "Error al obtener productos del carrito: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            // Cerramos todas las conexiones
+            ConexionDB.cerrarConexion(conn, ps, rs);
+        }
+        
+        return productos;
+    }
+public String obtenerNombreClientePorId(int idCliente) {
+    // Validamos que el ID no sea negativo
+    if (idCliente < 0) {
+        JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+        return null;
+    }
+
     Connection conn = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
 
     try {
-        conn = new ConexionDB().conectar(); // Usamos el conectar()
-        String sql = "SELECT p.id, p.nombre, p.descripcion, p.precio FROM carrito c JOIN product p ON c.id_producto = p.id WHERE c.id_cliente = ?";
-        ps = conn.prepareStatement(sql);
-        ps.setInt(1, idCliente);
-        rs = ps.executeQuery();
-
-        while (rs.next()) {
-            int id = rs.getInt("id");
-            String nombre = rs.getString("nombre");
-            String descripcion = rs.getString("descripcion");
-            double precio = rs.getDouble("precio");
-            Product producto = new Product(id, nombre, descripcion, precio);
-            productos.add(producto);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        ConexionDB.cerrarConexion(conn, ps, rs); // Cerramos todo
-    }
-    return productos;
-}
-
-    // Método para agregar producto al carrito de un cliente en la base de datos
-    public boolean agregarProductoAlCarrito(int idCliente, int idProducto) {
-    Connection conn = null;
-    PreparedStatement ps = null;
-    
-    try {
+        // Establecemos conexión
         conn = new ConexionDB().conectar();
-        String sql = "INSERT INTO carrito (id_cliente, id_producto) VALUES (?, ?)";
+
+        // Preparamos consulta SELECT
+        String sql = "SELECT nombre FROM clients WHERE id = ?";
         ps = conn.prepareStatement(sql);
         ps.setInt(1, idCliente);
-        ps.setInt(2, idProducto);
-        
-        int filasAfectadas = ps.executeUpdate();
-        return filasAfectadas > 0;
+
+        // Ejecutamos y procesamos resultado
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getString("nombre");
+        } else {
+            JOptionPane.showMessageDialog(null, "No se encontró un cliente con ID: " + idCliente);
+            return null;
+        }
     } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al agregar producto al carrito: " + e.getMessage());
-        return false;
+        JOptionPane.showMessageDialog(null, "Error al obtener nombre del cliente: " + e.getMessage());
+        return null;
     } finally {
-        ConexionDB.cerrarConexion(conn, ps, null);
+        ConexionDB.cerrarConexion(conn, ps, rs);
     }
 }
-    
+
+    /**
+     * Método para agregar un producto al carrito de un cliente
+     * @param idCliente ID del cliente propietario del carrito
+     * @param idProducto ID del producto a agregar
+     * @return true si se agregó correctamente, false en caso contrario
+     */
+    public boolean agregarProductoAlCarrito(int idCliente, int idProducto) {
+        // Validamos que los IDs no sean negativos
+        if (idCliente < 0) {
+            JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+            return false;
+        }
+        
+        if (idProducto < 0) {
+            JOptionPane.showMessageDialog(null, "Error: El ID del producto no puede ser negativo");
+            return false;
+        }
+        
+        Connection conn = null;
+        PreparedStatement ps = null;
+        
+        try {
+            // Establecemos conexión
+            conn = new ConexionDB().conectar();
+            
+            // Preparamos consulta de inserción
+            String sql = "INSERT INTO carrito (id_cliente, id_producto) VALUES (?, ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idCliente);
+            ps.setInt(2, idProducto);
+            
+            // Ejecutamos consulta y verificamos resultado
+            int filasAfectadas = ps.executeUpdate();
+            if (filasAfectadas > 0) {
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo agregar el producto al carrito");
+                return false;
+            }
+        } catch (SQLException e) {
+            // Mostramos error
+            JOptionPane.showMessageDialog(null, "Error al agregar producto al carrito: " + e.getMessage());
+            return false;
+        } finally {
+            // Cerramos todas las conexiones
+            ConexionDB.cerrarConexion(conn, ps, null);
+        }
+    }
 }

@@ -157,9 +157,24 @@ public class Registro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerActionPerformed
-        consultas consult = new consultas();
-        Client cliente = new Client(userField.getText(), passwordField.getText(), adressField.getText());
-        consult.guardarUsuario(cliente);
+        // Verificar que ningún campo contenga valores negativos
+    String usuario = userField.getText();
+    String password = passwordField.getText();
+    String correo = adressField.getText();
+    
+    // Verificar si algún campo contiene el signo menos
+    if (usuario.contains("-") || password.contains("-") || correo.contains("-")) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "No se permiten valores negativos en ningún campo", 
+            "Error de validación", 
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+        return; // Detener el proceso de registro
+    }
+    
+    // Si todos los datos son válidos, continuar con el registro
+    consultas consult = new consultas();
+    Client cliente = new Client(usuario, password, correo);
+    consult.guardarUsuario(cliente);
     }//GEN-LAST:event_registerActionPerformed
 
     private void registradoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registradoMouseClicked

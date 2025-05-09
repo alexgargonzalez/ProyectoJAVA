@@ -18,41 +18,55 @@ import javax.swing.DefaultListModel;
 public class Interfaz_Carrito extends javax.swing.JFrame {
 
     
-   private java.util.List<Product> productosEnCarrito = new java.util.ArrayList<>();
+   private java.util.List<Product> productosEnCarrito = new java.util.ArrayList<>(); // Declara una lista para almacenar los productos en el carrito, inicializada como un ArrayList.
+    
     /**
-     * Creates new form Interfaz_Carrito
+     * Crea una nueva instancia de la interfaz del carrito.
      */
-    private Carrito carrito;
+    private Carrito carrito; // Declara un objeto Carrito que contendrá los productos del carrito de compras.
     
-    private int idCliente;
-    private consultas sql = new consultas(); // Añade esta línea
-    
-    public Interfaz_Carrito() {
-        initComponents();
+    private int idCliente; // Declara una variable para almacenar el ID del cliente.
+    private consultas sql = new consultas(); // Crea una instancia de la clase consultas para realizar operaciones de base de datos.
+
+    /**
+     * Constructor de la clase Interfaz_Carrito.
+     */
+    public Interfaz_Carrito() { // Constructor de la clase.
+        initComponents(); // Llama al método que inicializa los componentes de la interfaz gráfica (genera la GUI).
+
         // Obtenemos el ID del cliente conectado actualmente
-        this.idCliente = sql.getIdCliente();
-        this.carrito = new Carrito();
-        String html = "<html><u>Seguir comprando</u></html>";
+        this.idCliente = sql.getIdCliente(); // Llama al método getIdCliente() de la clase consultas para obtener el ID del cliente actual y lo asigna a la variable idCliente.
         
+        this.carrito = new Carrito(); // Inicializa el objeto carrito como una nueva instancia de la clase Carrito.
+        
+        String html = "<html><u>Seguir comprando</u></html>"; // Crea un string en formato HTML para mostrar "Seguir comprando" subrayado en la interfaz.
+
         // Cargamos los productos del carrito de ESTE cliente
-        carrito.getCarrito().addAll(
-            sql.obtenerProductosDelCarrito(idCliente) 
+        carrito.getCarrito().addAll( // Agrega todos los productos obtenidos del carrito del cliente a la lista del carrito.
+            sql.obtenerProductosDelCarrito(idCliente) // Llama al método obtenerProductosDelCarrito() de la clase consultas, pasando el idCliente para obtener los productos del carrito de ese cliente.
         );
-        seguirComprando.setText(html);
-        mostrarProductosEnCarrito();
-        System.out.println("ID Cliente en Interfaz_Carrito: " + idCliente);
+        
+        seguirComprando.setText(html); // Establece el texto del componente seguirComprando con el string HTML creado anteriormente.
+        
+        mostrarProductosEnCarrito(); // Llama al método mostrarProductosEnCarrito() para actualizar la visualización de los productos en el carrito.
+        
+        System.out.println("ID Cliente en Interfaz_Carrito: " + idCliente); // Imprime en la consola el ID del cliente para fines de depuración.
     }
     
- private void mostrarProductosEnCarrito() {
-    DefaultListModel<String> listModel = new DefaultListModel<>();
+    /**
+     * Método que muestra los productos en el carrito en la interfaz gráfica.
+     */
+    private void mostrarProductosEnCarrito() { // Método que muestra los productos en el carrito en la interfaz gráfica.
+        DefaultListModel<String> listModel = new DefaultListModel<>(); // Crea un nuevo modelo de lista para almacenar los elementos que se mostrarán en la lista.
 
-    for (Product producto : carrito.getCarrito()) {
-        listModel.addElement(producto.getName() + " - " + producto.getPrice() + "€");
-    }
+        for (Product producto : carrito.getCarrito()) { // Itera sobre cada producto en el carrito.
+            listModel.addElement(producto.getName() + " - " + producto.getPrice() + "€"); // Agrega una representación del producto (nombre y precio) al modelo de lista.
+        }
 
-    elementos.setModel(listModel);
-    // Habilitar la lista para poder seleccionar elementos
-    elementos.setEnabled(true);
+        elementos.setModel(listModel); // Establece el modelo de lista en el componente elementos (una lista en la interfaz gráfica).
+        
+        // Habilitar la lista para poder seleccionar elementos
+        elementos.setEnabled(true); // Habilita el componente elementos para que el usuario pueda interactuar con él (seleccionar productos).
 }
 
 
@@ -238,63 +252,70 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
 
     private void Eliminar1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Eliminar1MouseClicked
         // TODO add your handling code here:
-        // Verificar si hay productos en el carrito
+        // Verificar si el carrito está vacío
     if (carrito.getCarrito().isEmpty()) {
+        // Mostrar mensaje indicando que el carrito está vacío
         javax.swing.JOptionPane.showMessageDialog(
             this,
             "No hay productos en el carrito para realizar la compra.",
             "Carrito vacío",
             javax.swing.JOptionPane.INFORMATION_MESSAGE);
-        return;
+        return; // Salir del método si no hay productos
     }
     
-    // Preguntar confirmación al usuario
+    // Mostrar mensaje de confirmación al usuario
     int confirmacion = javax.swing.JOptionPane.showConfirmDialog(
         this,
         "¿Deseas finalizar la compra y generar la factura?",
         "Confirmar compra",
         javax.swing.JOptionPane.YES_NO_OPTION);
     
+    // Si el usuario confirma con "Sí"
     if (confirmacion == javax.swing.JOptionPane.YES_OPTION) {
-        // Obtener el nombre del cliente para la factura
+        // Obtener el nombre del cliente desde la base de datos
         String nombreCliente = obtenerNombreCliente(idCliente);
         
-        // Generar el PDF de la factura
+        // Generar el PDF de la factura usando el carrito actual
         String rutaPDF = PDFGenerator.generarPDFCompra(carrito.getCarrito(), idCliente, nombreCliente);
         
+        // Si la ruta no es nula, es decir, el PDF se generó correctamente
         if (rutaPDF != null) {
             // Registrar la compra en la base de datos
             boolean compraRegistrada = registrarCompraEnBD();
             
+            // Si la compra se registró correctamente
             if (compraRegistrada) {
                 // Vaciar el carrito en la base de datos
                 boolean carritoVaciado = vaciarCarritoEnBD();
                 
+                // Si también se vació correctamente en la base de datos
                 if (carritoVaciado) {
-                    // Vaciar el carrito local
+                    // Vaciar el carrito local en memoria
                     carrito.vaciarCarrito();
                     
-                    // Actualizar la vista
+                    // Actualizar la visualización del carrito
                     mostrarProductosEnCarrito();
                     
-                    // Mostrar mensaje de éxito
+                    // Mostrar mensaje de éxito al usuario con la ruta del PDF
                     javax.swing.JOptionPane.showMessageDialog(
                         this,
                         "Compra realizada con éxito.\nLa factura se ha guardado en: " + rutaPDF,
                         "Compra exitosa",
                         javax.swing.JOptionPane.INFORMATION_MESSAGE);
                     
-                    // Preguntar si desea abrir el PDF
+                    // Preguntar si desea abrir el archivo PDF
                     int abrirPDF = javax.swing.JOptionPane.showConfirmDialog(
                         this,
                         "¿Deseas abrir la factura en PDF?",
                         "Abrir factura",
                         javax.swing.JOptionPane.YES_NO_OPTION);
                     
+                    // Si el usuario dice que sí, intentar abrir el archivo
                     if (abrirPDF == javax.swing.JOptionPane.YES_OPTION) {
                         try {
                             java.awt.Desktop.getDesktop().open(new java.io.File(rutaPDF));
                         } catch (java.io.IOException e) {
+                            // Mostrar mensaje si ocurre un error al abrir el PDF
                             javax.swing.JOptionPane.showMessageDialog(
                                 this,
                                 "No se pudo abrir el archivo PDF. Ruta: " + rutaPDF,

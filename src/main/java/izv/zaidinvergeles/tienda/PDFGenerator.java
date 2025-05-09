@@ -1,177 +1,166 @@
-package izv.zaidinvergeles.tienda;
+package izv.zaidinvergeles.tienda; // Define el paquete donde se encuentra la clase PDFGenerator.
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.*; // Importa las clases necesarias de iText para crear documentos PDF.
+import com.itextpdf.text.pdf.*; // Importa las clases necesarias de iText para trabajar con PDF.
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.swing.JOptionPane;
+import javax.swing.*; // Importa las clases de Swing para mostrar diálogos.
+import java.io.*; // Importa las clases de entrada/salida para manejar archivos.
+import java.text.SimpleDateFormat; // Importa la clase para formatear fechas.
+import java.util.ArrayList; // Importa la clase ArrayList para manejar listas de productos.
+import java.util.Date; // Importa la clase Date para trabajar con fechas.
 
 /**
- * Clase para generar facturas en formato PDF para el carrito de compras
+ * Clase encargada de generar facturas en formato PDF a partir del carrito de compras.
  */
 public class PDFGenerator {
 
+    /**
+     * Genera un archivo PDF con los datos de la compra y lo guarda en la carpeta "TiendaFacturas".
+     * @param productos Lista de productos comprados.
+     * @param idCliente ID del cliente que realiza la compra.
+     * @param nombreCliente Nombre del cliente.
+     * @return Ruta completa del archivo PDF generado.
+     */
     public static String generarPDFCompra(ArrayList<Product> productos, int idCliente, String nombreCliente) {
-        String directorioUsuario = System.getProperty("user.home");
-        String rutaDirectorio = directorioUsuario + File.separator + "TiendaFacturas";
-        File directorio = new File(rutaDirectorio);
-        if (!directorio.exists()) {
-            directorio.mkdirs();
-        }
+        // Ruta de salida: carpeta en el escritorio del usuario
+        String rutaDirectorio = System.getProperty("user.home") + File.separator + "TiendaFacturas"; // Define la ruta donde se guardará el PDF.
+        File directorio = new File(rutaDirectorio); // Crea un objeto File que representa el directorio.
+        if (!directorio.exists()) { // Verifica si el directorio no existe.
+            directorio.mkdirs(); // Crea la carpeta si no existe.
+        } // Crea carpeta si no existe
 
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String fechaHora = formatoFecha.format(new Date());
-        String nombreArchivo = "Factura_" + idCliente + "_" + fechaHora + ".pdf";
-        String rutaCompleta = rutaDirectorio + File.separator + nombreArchivo;
+        // Nombre del archivo: Factura_ID_FECHA.pdf
+        String fechaHora = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); // Formatea la fecha y hora actual.
+        String nombreArchivo = "Factura_" + idCliente + "_" + fechaHora + ".pdf"; // Crea el nombre del archivo PDF.
+        String rutaCompleta = rutaDirectorio + File.separator + nombreArchivo; // Define la ruta completa del archivo.
 
-        Document documento = new Document();
+        Document documento = new Document(); // Crea un nuevo documento PDF.
 
         try {
-            PdfWriter.getInstance(documento, new FileOutputStream(rutaCompleta));
-            documento.open();
+            // Inicializamos escritura en el documento PDF
+            PdfWriter.getInstance(documento, new FileOutputStream(rutaCompleta)); // Asocia el documento a un archivo de salida.
+            documento.open(); // Abre el documento para escritura.
 
-            agregarCabecera(documento, nombreCliente, idCliente);
-            agregarTablaProductos(documento, productos);
-            agregarTotales(documento, productos);
-            agregarPiePagina(documento);
+            // Secciones del PDF
+            agregarCabecera(documento, nombreCliente, idCliente); // Agrega la cabecera con los datos del cliente.
+            agregarTablaProductos(documento, productos); // Agrega la tabla con los productos comprados.
+            agregarTotales(documento, productos); // Agrega la sección de totales.
+            agregarPiePagina(documento); // Agrega el pie de página.
 
-            documento.close();
-            return rutaCompleta;
+            documento.close(); // Cierra el documento.
+            return rutaCompleta; // Devolvemos la ruta del archivo creado.
 
-        } catch (DocumentException | IOException e) {
-            JOptionPane.showMessageDialog(null, "Error al generar el PDF: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            return null;
+        } catch (DocumentException | IOException e) { // Captura excepciones relacionadas con el documento o la entrada/salida.
+            JOptionPane.showMessageDialog(null, "Error al generar el PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); // Muestra un mensaje de error.
+            e.printStackTrace(); // Imprime la traza del error en la consola.
+            return null; // Devuelve null en caso de error.
         }
     }
 
-    private static void agregarCabecera(Document documento, String nombreCliente, int idCliente) throws DocumentException {
-        Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20);
-        Paragraph titulo = new Paragraph("FACTURA DE COMPRA", fuenteTitulo);
-        titulo.setAlignment(Element.ALIGN_CENTER);
-        documento.add(titulo);
+    // --------------------------- SECCIONES DEL PDF ---------------------------
 
-        documento.add(new Paragraph(" "));
+    /**
+     * Agrega la cabecera con la fecha, número de factura y datos del cliente.
+     */
+    private static void agregarCabecera(Document doc, String nombre, int id) throws DocumentException {
+        // Título principal
+        Paragraph titulo = new Paragraph("FACTURA DE COMPRA", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20)); // Crea un párrafo con el título en negrita.
+        titulo.setAlignment(Element.ALIGN_CENTER); // Alinea el título al centro.
+        doc.add(titulo); // Agrega el título al documento.
+        doc.add(new Paragraph(" ")); // Agrega un espacio en blanco.
 
-        Font fuenteNormal = FontFactory.getFont(FontFactory.HELVETICA, 12);
-        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String fechaActual = formato.format(new Date());
+        // Fecha y número de factura
+        String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()); // Formatea la fecha actual.
+        doc.add(new Paragraph("Fecha: " + fecha)); // Agrega la fecha al documento.
+        doc.add(new Paragraph("Nº Factura: " + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()))); // Agrega el número de factura basado en la fecha y hora.
+        doc.add(new Paragraph(" ")); // Agrega otro espacio en blanco.
 
-        Paragraph fechaParrafo = new Paragraph("Fecha: " + fechaActual, fuenteNormal);
-        documento.add(fechaParrafo);
-
-        SimpleDateFormat formatoFactura = new SimpleDateFormat("yyyyMMddHHmmss");
-        String numeroFactura = formatoFactura.format(new Date());
-        Paragraph facturaParrafo = new Paragraph("Nº Factura: " + numeroFactura, fuenteNormal);
-        documento.add(facturaParrafo);
-
-        documento.add(new Paragraph(" "));
-        Font fuenteSubtitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
-        documento.add(new Paragraph("DATOS DEL CLIENTE", fuenteSubtitulo));
-        documento.add(new Paragraph("Cliente: " + nombreCliente, fuenteNormal));
-        documento.add(new Paragraph("ID Cliente: " + idCliente, fuenteNormal));
-        documento.add(new Paragraph(" "));
+        // Datos del cliente
+        doc.add(new Paragraph("DATOS DEL CLIENTE", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14))); // Agrega un subtítulo en negrita para los datos del cliente.
+        doc.add(new Paragraph("Cliente: " + nombre)); // Agrega el nombre del cliente.
+        doc.add(new Paragraph("ID Cliente: " + id)); // Agrega el ID del cliente.
+        doc.add(new Paragraph(" ")); // Agrega un espacio en blanco.
     }
 
-    private static void agregarTablaProductos(Document documento, ArrayList<Product> productos) throws DocumentException {
-        Font fuenteSubtitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
-        documento.add(new Paragraph("DETALLE DE PRODUCTOS", fuenteSubtitulo));
-        documento.add(new Paragraph(" "));
+    /**
+     * Crea la tabla con la lista de productos.
+     */
+    private static void agregarTablaProductos(Document doc, ArrayList<Product> productos) throws DocumentException {
+        doc.add(new Paragraph("DETALLE DE PRODUCTOS", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14))); // Agrega un subtítulo para la sección de productos.
+        doc.add(new Paragraph(" ")); // Agrega un espacio en blanco.
 
-        PdfPTable tabla = new PdfPTable(4);
-        tabla.setWidthPercentage(100);
-        float[] anchos = {1f, 4f, 1f, 1.5f};
-        tabla.setWidths(anchos);
+        PdfPTable tabla = new PdfPTable(4); // Crea una tabla con 4 columnas: ID, Producto, Precio, Subtotal.
+        tabla.setWidthPercentage(100); // La tabla ocupará el 100% del ancho del documento.
+        tabla.setWidths(new float[]{1f, 4f, 1f, 1.5f}); // Define el ancho relativo de cada columna.
 
-        Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+        // Encabezados
+        String[] headers = {"ID", "Producto", "Precio", "Subtotal"}; // Define los títulos de las columnas.
+        for (String texto : headers) // Para cada encabezado,
+            tabla.addCell(crearCelda(texto, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12), Element.ALIGN_CENTER)); // agrega una celda con el texto centrado y fuente en negrita.
 
-        String[] encabezados = {"ID", "Producto", "Precio", "Subtotal"};
-        for (String encabezado : encabezados) {
-            PdfPCell celda = new PdfPCell(new Phrase(encabezado, fuenteEncabezado));
-            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-            celda.setPadding(5);
-            tabla.addCell(celda);
+        // Filas con productos
+        Font fuente = FontFactory.getFont(FontFactory.HELVETICA, 12); // Fuente normal para las filas de productos.
+        for (Product p : productos) { // Itera sobre todos los productos.
+            tabla.addCell(crearCelda(String.valueOf(p.getId()), fuente, Element.ALIGN_CENTER)); // Añade la celda con el ID centrado.
+            tabla.addCell(crearCelda(p.getName(), fuente, Element.ALIGN_LEFT)); // Añade la celda con el nombre del producto alineado a la izquierda.
+            tabla.addCell(crearCelda(String.format("%.2f €", p.getPrice()), fuente, Element.ALIGN_RIGHT)); // Añade la celda con el precio alineado a la derecha.
+            tabla.addCell(crearCelda(String.format("%.2f €", p.getPrice()), fuente, Element.ALIGN_RIGHT)); // Añade la celda con el subtotal (igual al precio) alineado a la derecha.
         }
 
-        Font fuenteContenido = FontFactory.getFont(FontFactory.HELVETICA, 12);
-
-        for (Product producto : productos) {
-            tabla.addCell(crearCelda(String.valueOf(producto.getId()), fuenteContenido, Element.ALIGN_CENTER));
-            tabla.addCell(crearCelda(producto.getName(), fuenteContenido, Element.ALIGN_LEFT));
-            tabla.addCell(crearCelda(String.format("%.2f €", producto.getPrice()), fuenteContenido, Element.ALIGN_RIGHT));
-            tabla.addCell(crearCelda(String.format("%.2f €", producto.getPrice()), fuenteContenido, Element.ALIGN_RIGHT));
-        }
-
-        documento.add(tabla);
+        doc.add(tabla); // Añade la tabla al documento.
     }
 
-    private static void agregarTotales(Document documento, ArrayList<Product> productos) throws DocumentException {
-        documento.add(new Paragraph(" "));
+    /**
+     * Agrega la sección de totales (Total).
+     */
+    private static void agregarTotales(Document doc, ArrayList<Product> productos) throws DocumentException {
+        doc.add(new Paragraph(" ")); // Añade un espacio en blanco.
 
-        double total = productos.stream().mapToDouble(Product::getPrice).sum();
-        double baseImponible = total / 1.21;
-        double iva = total - baseImponible;
+        // Cálculos
+        double total = productos.stream().mapToDouble(Product::getPrice).sum(); // Calcula la suma total de los precios de todos los productos.
 
-        PdfPTable tablaTotal = new PdfPTable(2);
-        tablaTotal.setWidthPercentage(40);
-        tablaTotal.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        tablaTotal.setWidths(new float[]{1f, 1f});
+        PdfPTable tabla = new PdfPTable(2); // Crea una tabla con dos columnas para las etiquetas y valores.
+        tabla.setWidthPercentage(40); // La tabla ocupará el 40% del ancho disponible.
+        tabla.setHorizontalAlignment(Element.ALIGN_RIGHT); // La tabla se alinea a la derecha.
+        tabla.setWidths(new float[]{1f, 1f}); // Columnas de igual ancho.
 
-        Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
-        Font fuenteContenido = FontFactory.getFont(FontFactory.HELVETICA, 12);
-        Font fuenteTotal = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+        // Filas con valores
+        tabla.addCell(crearCelda("TOTAL:", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14), Element.ALIGN_RIGHT, 0)); // Celda con la palabra "TOTAL" sin borde y alineada a la derecha.
+        tabla.addCell(crearCelda(String.format("%.2f €", total), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14), Element.ALIGN_RIGHT, 0)); // Celda con el total calculado en formato de moneda, sin borde, alineada a la derecha.
 
-        tablaTotal.addCell(crearCelda("Base Imponible:", fuenteEncabezado, Element.ALIGN_RIGHT, 0));
-        tablaTotal.addCell(crearCelda(String.format("%.2f €", baseImponible), fuenteContenido, Element.ALIGN_RIGHT, 0));
-
-        tablaTotal.addCell(crearCelda("IVA (21%):", fuenteEncabezado, Element.ALIGN_RIGHT, 0));
-        tablaTotal.addCell(crearCelda(String.format("%.2f €", iva), fuenteContenido, Element.ALIGN_RIGHT, 0));
-
-        tablaTotal.addCell(crearCelda("TOTAL:", fuenteTotal, Element.ALIGN_RIGHT, 0));
-        tablaTotal.addCell(crearCelda(String.format("%.2f €", total), fuenteTotal, Element.ALIGN_RIGHT, 0));
-
-        documento.add(tablaTotal);
+        doc.add(tabla); // Añade la tabla de totales al documento.
     }
 
-    private static void agregarPiePagina(Document documento) throws DocumentException {
-        documento.add(new Paragraph(" "));
-        documento.add(new Paragraph(" "));
+    /**
+     * Añade una nota final de agradecimiento y la fecha de generación.
+     */
+    private static void agregarPiePagina(Document doc) throws DocumentException {
+        doc.add(new Paragraph(" ")); // Añade espacio en blanco.
+        doc.add(new Paragraph(" ")); // Añade espacio en blanco para separación visual.
 
-        Font fuentePie = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10);
-        Paragraph pie = new Paragraph("Gracias por su compra. Este documento sirve como comprobante de pago.", fuentePie);
-        pie.setAlignment(Element.ALIGN_CENTER);
-        documento.add(pie);
+        Font fuente = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10); // Fuente en cursiva, tamaño pequeño para las notas.
+        Paragraph mensaje = new Paragraph("Gracias por su compra. Este documento sirve como comprobante de pago.", fuente); // Mensaje de agradecimiento al cliente.
+        mensaje.setAlignment(Element.ALIGN_CENTER); // Alinea el mensaje centrado.
+        doc.add(mensaje); // Añade el mensaje al documento.
 
-        Paragraph fecha = new Paragraph("Documento generado el " +
-                new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), fuentePie);
-        fecha.setAlignment(Element.ALIGN_CENTER);
-        documento.add(fecha);
+        String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()); // Fecha actual con formato día/mes/año horas:minutos:segundos.
+        Paragraph generado = new Paragraph("Documento generado el " + fecha, fuente); // Mensaje con fecha de generación del documento.
+        generado.setAlignment(Element.ALIGN_CENTER); // Alinea en el centro.
+        doc.add(generado); // Añade el mensaje al documento.
     }
 
+    /**
+     * Método de ayuda para crear celdas con alineación y estilo.
+     */
     private static PdfPCell crearCelda(String texto, Font fuente, int alineacion) {
-        return crearCelda(texto, fuente, alineacion, 1);
+        return crearCelda(texto, fuente, alineacion, 1); // Llama a la sobrecarga que permite definir borde, por defecto con borde (1).
     }
 
     private static PdfPCell crearCelda(String texto, Font fuente, int alineacion, int borde) {
-        PdfPCell celda = new PdfPCell(new Phrase(texto, fuente));
-        celda.setHorizontalAlignment(alineacion);
-        celda.setPadding(5);
-        celda.setBorder(borde);
-        return celda;
+        PdfPCell celda = new PdfPCell(new Phrase(texto, fuente)); // Crea una celda nueva con el texto y la fuente especificada.
+        celda.setHorizontalAlignment(alineacion); // Establece la alineación horizontal del texto en la celda.
+        celda.setPadding(5); // Establece un relleno interno de 5 puntos para separar el texto del borde.
+        celda.setBorder(borde); // Establece el estilo del borde (0 = sin borde, 1 = borde visible).
+        return celda; // Devuelve la celda creada con sus configuraciones.
     }
 }

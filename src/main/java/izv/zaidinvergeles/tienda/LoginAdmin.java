@@ -184,19 +184,27 @@ public class LoginAdmin extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        consultas connectionAdmin = new consultas();
+      // Verificar que ningún campo contenga valores negativos
+    String usuario = txtUser.getText();
     String password = new String(txtPassword.getPassword());
     String clue = new String(txtClue.getPassword());
     
-    // Usar el método consultarAdmin modificado que retorna un boolean
-    boolean loginExitoso = connectionAdmin.consultarAdmin(txtUser.getText(), password, clue);
+    // Verificar si algún campo contiene el signo menos
+    if (usuario.contains("-") || password.contains("-") || clue.contains("-")) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "No se permiten valores negativos en ningún campo", 
+            "Error de validación", 
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+        return; // Detener el proceso de login
+    }
+    
+    // Si todos los datos son válidos, continuar con el login de administrador
+    consultas connectionAdmin = new consultas();
+    boolean loginExitoso = connectionAdmin.consultarAdmin(usuario, password, clue);
     
     // Si la autenticación fue exitosa, abrir el panel de administrador
     if (loginExitoso) {
-        // Ocultar la ventana de login de admin
         this.setVisible(false);
-        
-        // Abrir el panel de administrador
         PanelAdmin panelAdmin = new PanelAdmin();
         panelAdmin.setVisible(true);
         panelAdmin.setLocationRelativeTo(null);
