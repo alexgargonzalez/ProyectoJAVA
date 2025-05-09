@@ -53,7 +53,7 @@ public class Menu extends javax.swing.JFrame {
         this.idCliente = consulta.getIdCliente();
         System.out.println("ID del cliente en Menu: " + idCliente);
         
-        cargarIconos();           // Cargar los iconos para los menús
+                // Cargar los iconos para los menús
         cargarProductosDesdeBD(); // Cargar productos desde la base de datos
         mostrarProductos(); 
         jMenu1.setText(consulta.obtenerNombreClientePorId(consulta.getIdCliente()));
@@ -63,41 +63,7 @@ public class Menu extends javax.swing.JFrame {
      * Método para cargar los iconos en los menús y elementos de la interfaz.
      * Busca los recursos de imagen y los asigna a cada componente.
      */
-    private void cargarIconos() {
-        // Cargar icono de usuario
-        URL userIconURL = getClass().getResource("/img/usuario.png");
-        if (userIconURL != null) {
-            jMenu1.setIcon(new javax.swing.ImageIcon(userIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono de usuario.");
-        }
-
-       
-
-        // Cargar icono de carrito
-        URL cartIconURL = getClass().getResource("/img/carrito-de-compras.png");
-        if (cartIconURL != null) {
-            jMenu3.setIcon(new javax.swing.ImageIcon(cartIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono del carrito.");
-        }
-
-        // Cargar icono de ir al carrito
-        URL goToCartIconURL = getClass().getResource("/img/carro-de-la-carretilla.png");
-        if (goToCartIconURL != null) {
-            ir_Carrito.setIcon(new javax.swing.ImageIcon(goToCartIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono de ir al carrito.");
-        }
-
-        // Cargar icono de salir
-        URL exitIconURL = getClass().getResource("/img/salida.png");
-        if (exitIconURL != null) {
-            jMenu4.setIcon(new javax.swing.ImageIcon(exitIconURL));
-        } else {
-            System.err.println("No se pudo cargar el icono de salir.");
-        }
-    }
+  
 
     /**
      * Método para cargar los productos desde la base de datos.
