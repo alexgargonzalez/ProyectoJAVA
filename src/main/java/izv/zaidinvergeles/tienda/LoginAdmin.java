@@ -20,7 +20,7 @@ public class LoginAdmin extends javax.swing.JFrame {
         initComponents();
         
         
-        String clientHtml = "<html><u>Soy cliente</u></html>";
+        String clientHtml = "<html><u>I am client</u></html>";
         clientInAdmin.setText(clientHtml);
     }
 
@@ -58,7 +58,7 @@ public class LoginAdmin extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Usuario");
+        jLabel3.setText("User");
         jLabel3.setMinimumSize(new java.awt.Dimension(30, 16));
         jLabel3.setPreferredSize(new java.awt.Dimension(50, 16));
         jLabel3.setRequestFocusEnabled(false);
@@ -67,7 +67,7 @@ public class LoginAdmin extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Contraseña");
+        jLabel2.setText("Password");
         jLabel2.setMinimumSize(new java.awt.Dimension(30, 16));
         jLabel2.setPreferredSize(new java.awt.Dimension(50, 16));
         jLabel2.setRequestFocusEnabled(false);
@@ -83,7 +83,7 @@ public class LoginAdmin extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Clave de Administrador");
+        jLabel4.setText("Admin password");
         jLabel4.setMinimumSize(new java.awt.Dimension(30, 16));
         jLabel4.setPreferredSize(new java.awt.Dimension(50, 16));
         jLabel4.setRequestFocusEnabled(false);
@@ -92,7 +92,7 @@ public class LoginAdmin extends javax.swing.JFrame {
 
         txtClue.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
-        jButton1.setText("Entrar");
+        jButton1.setText("Enter");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -100,7 +100,7 @@ public class LoginAdmin extends javax.swing.JFrame {
         });
 
         clientInAdmin.setForeground(new java.awt.Color(255, 255, 255));
-        clientInAdmin.setText("Soy cliente");
+        clientInAdmin.setText("I am a client");
         clientInAdmin.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 clientInAdminMouseClicked(evt);
@@ -192,8 +192,8 @@ public class LoginAdmin extends javax.swing.JFrame {
     // Verificar si algún campo contiene el signo menos
     if (usuario.contains("-") || password.contains("-") || clue.contains("-")) {
         javax.swing.JOptionPane.showMessageDialog(this, 
-            "No se permiten valores negativos en ningún campo", 
-            "Error de validación", 
+            "Negative values ​​are not allowed in any field.", 
+            "Validation error", 
             javax.swing.JOptionPane.ERROR_MESSAGE);
         return; // Detener el proceso de login
     }

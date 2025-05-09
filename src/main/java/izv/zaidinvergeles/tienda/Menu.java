@@ -94,7 +94,7 @@ public class Menu extends javax.swing.JFrame {
             JLabel lblNombre = new JLabel(producto.toString());
             
             // Crear botón para añadir el producto al carrito
-            JButton btnAgregar = new JButton("Añadir al carrito");
+            JButton btnAgregar = new JButton("Add to cart");
 
             // Añadir listener al botón para manejar el evento de clic
             btnAgregar.addActionListener(e -> agregarProductoAlCarrito(producto));
@@ -132,15 +132,15 @@ public class Menu extends javax.swing.JFrame {
         if (exito) {
             // Mostrar mensaje de confirmación con el nombre del producto
             JOptionPane.showMessageDialog(this, 
-                "HAS AÑADIDO " + producto.getName() + " AL CARRITO", 
-                "Producto Añadido", 
+                "YOU HAVE ADDED " + producto.getName() + " TO THE CART", 
+                "Added Product", 
                 JOptionPane.INFORMATION_MESSAGE);
             
-            System.out.println("Producto agregado al carrito: " + producto.getName());
+            System.out.println("Product added to cart: " + producto.getName());
         } else {
             // Mostrar mensaje de error si no se pudo añadir
             JOptionPane.showMessageDialog(this, 
-                "No se pudo añadir " + producto.getName() + " al carrito", 
+                "Could not add " + producto.getName() + " to the cart", 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -261,8 +261,8 @@ public class Menu extends javax.swing.JFrame {
         // Mostrar confirmación de cierre de sesión
         int respuesta = JOptionPane.showConfirmDialog(
             this,
-            "¿Estás seguro de que quieres cerrar sesión?",
-            "Confirmar cierre de sesión",
+            "Are you sure you want to log out?",
+            "Confirm logout",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE
         );
@@ -282,8 +282,8 @@ public class Menu extends javax.swing.JFrame {
             
             JOptionPane.showMessageDialog(
                 ventanaLogin,
-                "Has cerrado sesión correctamente",
-                "Sesión finalizada",
+                "You have successfully logged out",
+                "Session ended",
                 JOptionPane.INFORMATION_MESSAGE
             );
         }
@@ -294,8 +294,8 @@ public class Menu extends javax.swing.JFrame {
         // Mostrar confirmación antes de salir
         int respuesta = JOptionPane.showConfirmDialog(
             this,
-            "¿Estás seguro de que quieres salir de la aplicación?",
-            "Confirmar salida",
+            "Are you sure you want to exit the app?",
+            "Confirm departure",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE
         );

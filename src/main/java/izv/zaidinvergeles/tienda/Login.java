@@ -20,7 +20,7 @@ public class Login extends javax.swing.JFrame {
         
         
         
-        String nuno = "<html><u>QI want to register</u></html>";
+        String nuno = "<html><u>I want to register</u></html>";
         registro.setText(nuno);
         
         String administrador = "<html><u>I am Administrator</u></html>";

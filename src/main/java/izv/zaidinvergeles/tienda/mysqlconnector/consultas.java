@@ -30,7 +30,7 @@ public class consultas {
     public consultas(int idCliente) {
         // Validamos que el ID no sea menor a 0
         if (idCliente < 0) {
-            JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+            JOptionPane.showMessageDialog(null, "Error: Client ID cannot be negative");
             idClienteActual = 0; // Valor predeterminado o seguro
         } else {
             idClienteActual = idCliente;
@@ -91,12 +91,12 @@ public class consultas {
                 
                 // Validamos que el ID y precio no sean negativos
                 if (id < 0) {
-                    JOptionPane.showMessageDialog(null, "Error: Se encontró un producto con ID negativo: " + id);
+                    JOptionPane.showMessageDialog(null, "Error: A product with a negative ID was found: " + id);
                     continue; // Saltamos este producto
                 }
                 
                 if (precio < 0) {
-                    JOptionPane.showMessageDialog(null, "Error: Se encontró un producto con precio negativo: " + nombre);
+                    JOptionPane.showMessageDialog(null, "Error: A product with a negative price was found: " + nombre);
                     continue; // Saltamos este producto
                 }
                 
@@ -145,12 +145,12 @@ public class consultas {
                 try {
                     int idCliente = Integer.parseInt(usuario.getId());
                     if (idCliente < 0) {
-                        JOptionPane.showMessageDialog(null, "Error: Se encontró un cliente con ID negativo: " + idCliente);
+                        JOptionPane.showMessageDialog(null, "Error: Client with negative ID found: " + idCliente);
                         continue; // Saltamos este cliente
                     }
                 } catch (NumberFormatException e) {
                     // Si el ID no es un número, mostramos error
-                    JOptionPane.showMessageDialog(null, "Error: ID de cliente inválido: " + usuario.getId());
+                    JOptionPane.showMessageDialog(null, "Error: Invalid client ID: " + usuario.getId());
                     continue; // Saltamos este cliente
                 }
                 
@@ -158,7 +158,7 @@ public class consultas {
             }
         } catch(Exception e) {
             // Mostramos error si hay problemas
-            JOptionPane.showMessageDialog(null, "Error al obtener clientes: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error getting clients: " + e.getMessage());
         } finally {
             // Cerramos todas las conexiones
             ConexionDB.cerrarConexion(conn, pst, rs);
@@ -174,7 +174,7 @@ public class consultas {
     public void eliminarCliente(String nombreCliente) {
         // Validamos que el nombre no esté vacío
         if (nombreCliente == null || nombreCliente.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Error: El nombre del cliente no puede estar vacío");
+            JOptionPane.showMessageDialog(null, "Error: Customer name cannot be empty");
             return;
         }
         
@@ -195,14 +195,14 @@ public class consultas {
             int filasAfectadas = pst.executeUpdate();
             
             if (filasAfectadas > 0) {
-                JOptionPane.showMessageDialog(null, "Cliente eliminado correctamente");
+                JOptionPane.showMessageDialog(null, "Successfully deleted client");
             } else {
-                JOptionPane.showMessageDialog(null, "No se encontró el cliente para eliminar");
+                JOptionPane.showMessageDialog(null, "No client found to delete");
             }
 
         } catch (SQLException e) {
             // Mostramos error si hay problemas
-            JOptionPane.showMessageDialog(null, "Error al eliminar cliente: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error deleting client: " + e.getMessage());
         } finally {
             // Cerramos todas las conexiones
             ConexionDB.cerrarConexion(conexion, pst, null);
@@ -216,23 +216,23 @@ public class consultas {
     public void guardarUsuario(Client cliente) {
         // Validamos que los campos no estén vacíos
         if (cliente.getName() == null || cliente.getName().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Error: El nombre del cliente no puede estar vacío");
+            JOptionPane.showMessageDialog(null, "Error: Customer name cannot be empty");
             return;
         }
         
         if (cliente.getPassword() == null || cliente.getPassword().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Error: La contraseña no puede estar vacía");
+            JOptionPane.showMessageDialog(null, "Error: Password cannot be empty");
             return;
         }
         
         if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Error: El email no puede estar vacío");
+            JOptionPane.showMessageDialog(null, "Error: Email cannot be empty");
             return;
         }
         
         // Validamos el formato del email (básico)
         if (!cliente.getEmail().contains("@") || !cliente.getEmail().contains(".")) {
-            JOptionPane.showMessageDialog(null, "Error: El formato del email es inválido");
+            JOptionPane.showMessageDialog(null, "Error: The email format is invalid");
             return;
         }
 
@@ -255,11 +255,11 @@ public class consultas {
             
             // Ejecutamos la consulta
             pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Guardado correctamente");
+            JOptionPane.showMessageDialog(null, "Saved successfully");
 
         } catch(SQLException e) {
             // Mostramos error específico para usuario duplicado
-            JOptionPane.showMessageDialog(null, "Error al guardar: " + "el usuario ya está creado");
+            JOptionPane.showMessageDialog(null, "Saving error: " + "the user is already created");
         } finally {
             // Cerramos todas las conexiones
             ConexionDB.cerrarConexion(conexion, pst, null);
@@ -274,7 +274,7 @@ public class consultas {
     public int devolverIdCliente(String nombreCliente) {
         // Validamos que el nombre no esté vacío
         if (nombreCliente == null || nombreCliente.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Error: El nombre del cliente no puede estar vacío");
+            JOptionPane.showMessageDialog(null, "Error: Customer name cannot be empty");
             return -1;
         }
         
@@ -302,11 +302,11 @@ public class consultas {
                 // Validamos que el ID no sea negativo
                 
             } else {
-                JOptionPane.showMessageDialog(null, "No se encontró el cliente: " + nombreCliente);
+                JOptionPane.showMessageDialog(null, "Client not found: " + nombreCliente);
             }
         } catch (Exception e) {
             // Mostramos error
-            JOptionPane.showMessageDialog(null, "Error al buscar cliente: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error searching for client: " + e.getMessage());
             e.printStackTrace();
         } finally {
             // Cerramos todas las conexiones
@@ -324,12 +324,12 @@ public class consultas {
    public void consultarUsuario(String user, String pass, Login loginn) {
     // Validamos que los campos no estén vacíos
     if (user == null || user.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Error: El nombre de usuario no puede estar vacío");
+        JOptionPane.showMessageDialog(null, "Error: Username cannot be empty");
         return;
     }
     
     if (pass == null || pass.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Error: La contraseña no puede estar vacía");
+        JOptionPane.showMessageDialog(null, "Error: Password cannot be empty");
         return;
     }
        
@@ -362,7 +362,7 @@ public class consultas {
                 setIdCliente(clienteId);
                 
                 // Mostramos mensaje de bienvenida
-                JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido " + user);
+                JOptionPane.showMessageDialog(null, "Login successful. Welcome. " + user);
                 System.out.println("ID del cliente conectado: " + idClienteActual);
                 
                 // Cerramos primero la ventana de login
@@ -375,10 +375,10 @@ public class consultas {
                 
                 return; // Salimos del método tras login exitoso
             } else {
-                JOptionPane.showMessageDialog(null, "Contraseña incorrecta.");
+                JOptionPane.showMessageDialog(null, "Incorrect password.");
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Usuario no encontrado.");
+            JOptionPane.showMessageDialog(null, "User not found.");
         }
     } catch (Exception e) {
         // Mostramos error
@@ -399,17 +399,17 @@ public class consultas {
     public boolean consultarAdmin(String user, String pass, String passAdmin) {
         // Validamos que los campos no estén vacíos
         if (user == null || user.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Error: El nombre de usuario admin no puede estar vacío");
+            JOptionPane.showMessageDialog(null, "Error: The admin username cannot be empty.");
             return false;
         }
         
         if (pass == null || pass.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Error: La contraseña admin no puede estar vacía");
+            JOptionPane.showMessageDialog(null, "Error: The admin password cannot be empty");
             return false;
         }
         
         if (passAdmin == null || passAdmin.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Error: La clave especial admin no puede estar vacía");
+            JOptionPane.showMessageDialog(null, "Error: The admin special key cannot be empty");
             return false;
         }
         
@@ -444,10 +444,10 @@ public class consultas {
                     JOptionPane.showMessageDialog(null, "Login correcto. Bienvenido Sr " + user);
                     loginExitoso = true;
                 } else {
-                    JOptionPane.showMessageDialog(null, "El conjunto de datos introducidos es incorrecto");
+                    JOptionPane.showMessageDialog(null, "The entered data set is incorrect");
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Usuario no encontrado");
+                JOptionPane.showMessageDialog(null, "User not found");
             }
         } catch (Exception e) {
             // Mostramos error
@@ -469,12 +469,12 @@ public class consultas {
     public boolean eliminarProductoDelCarrito(int idCliente, int idProducto) {
         // Validamos que los IDs no sean negativos
         if (idCliente < 0) {
-            JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+            JOptionPane.showMessageDialog(null, "Error: Client ID cannot be negative");
             return false;
         }
         
         if (idProducto < 0) {
-            JOptionPane.showMessageDialog(null, "Error: El ID del producto no puede ser negativo");
+            JOptionPane.showMessageDialog(null, "Error: Product ID cannot be negative");
             return false;
         }
         
@@ -497,12 +497,12 @@ public class consultas {
             if (filasAfectadas > 0) {
                 resultado = true;
             } else {
-                JOptionPane.showMessageDialog(null, "No se encontró el producto en el carrito");
+                JOptionPane.showMessageDialog(null, "The product was not found in the cart");
             }
         } catch (SQLException e) {
             // Mostramos error
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al eliminar el producto del carrito: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error deleting product from cart: " + e.getMessage());
         } finally {
             // Cerramos todas las conexiones
             ConexionDB.cerrarConexion(conn, ps, null);
@@ -519,7 +519,7 @@ public class consultas {
     public ArrayList<Product> obtenerProductosDelCarrito(int idCliente) {
         // Validamos que el ID del cliente no sea negativo
         if (idCliente < 0) {
-            JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+            JOptionPane.showMessageDialog(null, "Error: Client ID cannot be negative");
             return new ArrayList<>(); // Retornamos lista vacía
         }
         
@@ -549,12 +549,12 @@ public class consultas {
                 
                 // Validamos que ID y precio no sean negativos
                 if (id < 0) {
-                    JOptionPane.showMessageDialog(null, "Error: Se encontró un producto con ID negativo: " + id);
+                    JOptionPane.showMessageDialog(null, "Error: A product with a negative ID was found: " + id);
                     continue; // Saltamos este producto
                 }
                 
                 if (precio < 0) {
-                    JOptionPane.showMessageDialog(null, "Error: Se encontró un producto con precio negativo: " + nombre);
+                    JOptionPane.showMessageDialog(null, "Error: A product with a negative price was found:  " + nombre);
                     continue; // Saltamos este producto
                 }
                 
@@ -564,7 +564,7 @@ public class consultas {
             }
         } catch (Exception e) {
             // Mostramos error
-            JOptionPane.showMessageDialog(null, "Error al obtener productos del carrito: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error getting products from the cart: " + e.getMessage());
             e.printStackTrace();
         } finally {
             // Cerramos todas las conexiones
@@ -602,7 +602,7 @@ public String obtenerNombreClientePorId(int idCliente) {
             return null;
         }
     } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al obtener nombre del cliente: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Error getting client name: " + e.getMessage());
         return null;
     } finally {
         ConexionDB.cerrarConexion(conn, ps, rs);
@@ -618,12 +618,12 @@ public String obtenerNombreClientePorId(int idCliente) {
     public boolean agregarProductoAlCarrito(int idCliente, int idProducto) {
         // Validamos que los IDs no sean negativos
         if (idCliente < 0) {
-            JOptionPane.showMessageDialog(null, "Error: El ID del cliente no puede ser negativo");
+            JOptionPane.showMessageDialog(null, "Error: Client ID cannot be negative: ");
             return false;
         }
         
         if (idProducto < 0) {
-            JOptionPane.showMessageDialog(null, "Error: El ID del producto no puede ser negativo");
+            JOptionPane.showMessageDialog(null, "Error: Client ID cannot be negative");
             return false;
         }
         
@@ -645,7 +645,7 @@ public String obtenerNombreClientePorId(int idCliente) {
             if (filasAfectadas > 0) {
                 return true;
             } else {
-                JOptionPane.showMessageDialog(null, "No se pudo agregar el producto al carrito");
+                JOptionPane.showMessageDialog(null, "The product could not be added to the cart.");
                 return false;
             }
         } catch (SQLException e) {

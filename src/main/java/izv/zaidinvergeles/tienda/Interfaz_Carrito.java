@@ -39,7 +39,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         
         this.carrito = new Carrito(); // Inicializa el objeto carrito como una nueva instancia de la clase Carrito.
         
-        String html = "<html><u>Seguir comprando</u></html>"; // Crea un string en formato HTML para mostrar "Seguir comprando" subrayado en la interfaz.
+        String html = "<html><u>Continue shopping</u></html>"; // Crea un string en formato HTML para mostrar "Seguir comprando" subrayado en la interfaz.
 
         // Cargamos los productos del carrito de ESTE cliente
         carrito.getCarrito().addAll( // Agrega todos los productos obtenidos del carrito del cliente a la lista del carrito.
@@ -95,7 +95,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("CARRITO");
+        jLabel1.setText("CART");
 
         carritoArea.setEnabled(false);
 
@@ -119,7 +119,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         );
 
         seguirComprando.setForeground(new java.awt.Color(255, 255, 255));
-        seguirComprando.setText("Seguir comprando");
+        seguirComprando.setText("Continue shopping");
         seguirComprando.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 seguirComprandoMouseClicked(evt);
@@ -127,7 +127,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         });
 
         Eliminar.setForeground(new java.awt.Color(255, 255, 255));
-        Eliminar.setText("Eliminar");
+        Eliminar.setText("Delete");
         Eliminar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 EliminarMouseClicked(evt);
@@ -136,7 +136,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
 
         Eliminar1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         Eliminar1.setForeground(new java.awt.Color(255, 255, 255));
-        Eliminar1.setText("COMPRAR");
+        Eliminar1.setText("BUY");
         Eliminar1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 Eliminar1MouseClicked(evt);
@@ -148,21 +148,20 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(81, 81, 81)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(81, 81, 81)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                    .addComponent(seguirComprando, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(Eliminar))
-                                .addComponent(carritoArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(305, 305, 305)
-                        .addComponent(Eliminar1)))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(seguirComprando, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(Eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(carritoArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(125, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Eliminar1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(320, 320, 320))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,8 +213,8 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         // Mostrar confirmación antes de eliminar
         int confirmacion = javax.swing.JOptionPane.showConfirmDialog(
                 this, 
-                "¿Estás seguro de eliminar " + productoSeleccionado.getName() + " del carrito?",
-                "Confirmar eliminación",
+                "Are you sure you want to delete " + productoSeleccionado.getName() + " from cart?",
+                "Confirm delete",
                 javax.swing.JOptionPane.YES_NO_OPTION);
         
         if (confirmacion == javax.swing.JOptionPane.YES_OPTION) {
@@ -232,7 +231,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
                 // Informar al usuario
                 javax.swing.JOptionPane.showMessageDialog(
                         this, 
-                        "Producto eliminado del carrito correctamente.");
+                        "Product successfully removed from cart.");
             } else {
                 javax.swing.JOptionPane.showMessageDialog(
                         this, 
@@ -244,8 +243,8 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     } else {
         javax.swing.JOptionPane.showMessageDialog(
                 this, 
-                "Por favor, seleccione un producto para eliminar.",
-                "Selección requerida",
+                "Please select a product to remove.",
+                "Required selection",
                 javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }
     }//GEN-LAST:event_EliminarMouseClicked
@@ -257,8 +256,8 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
         // Mostrar mensaje indicando que el carrito está vacío
         javax.swing.JOptionPane.showMessageDialog(
             this,
-            "No hay productos en el carrito para realizar la compra.",
-            "Carrito vacío",
+            "There are no products in the shopping cart.",
+            "Empty cart",
             javax.swing.JOptionPane.INFORMATION_MESSAGE);
         return; // Salir del método si no hay productos
     }
@@ -266,8 +265,8 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
     // Mostrar mensaje de confirmación al usuario
     int confirmacion = javax.swing.JOptionPane.showConfirmDialog(
         this,
-        "¿Deseas finalizar la compra y generar la factura?",
-        "Confirmar compra",
+        "Do you want to complete the purchase and generate the invoice?",
+        "Confirm purchase",
         javax.swing.JOptionPane.YES_NO_OPTION);
     
     // Si el usuario confirma con "Sí"
@@ -299,15 +298,15 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
                     // Mostrar mensaje de éxito al usuario con la ruta del PDF
                     javax.swing.JOptionPane.showMessageDialog(
                         this,
-                        "Compra realizada con éxito.\nLa factura se ha guardado en: " + rutaPDF,
-                        "Compra exitosa",
+                        "Purchase completed successfully.\nThe invoice has been saved in:" + rutaPDF,
+                        "Successful purchase",
                         javax.swing.JOptionPane.INFORMATION_MESSAGE);
                     
                     // Preguntar si desea abrir el archivo PDF
                     int abrirPDF = javax.swing.JOptionPane.showConfirmDialog(
                         this,
-                        "¿Deseas abrir la factura en PDF?",
-                        "Abrir factura",
+                        "Do you want to open the invoice in PDF?",
+                        "Open invoice",
                         javax.swing.JOptionPane.YES_NO_OPTION);
                     
                     // Si el usuario dice que sí, intentar abrir el archivo
@@ -318,7 +317,7 @@ public class Interfaz_Carrito extends javax.swing.JFrame {
                             // Mostrar mensaje si ocurre un error al abrir el PDF
                             javax.swing.JOptionPane.showMessageDialog(
                                 this,
-                                "No se pudo abrir el archivo PDF. Ruta: " + rutaPDF,
+                                "Could not open PDF file. Path: " + rutaPDF,
                                 "Error",
                                 javax.swing.JOptionPane.ERROR_MESSAGE);
                         }
@@ -412,7 +411,7 @@ private boolean registrarCompraEnBD() {
         e.printStackTrace();
         javax.swing.JOptionPane.showMessageDialog(
             this,
-            "Error al registrar la compra: " + e.getMessage(),
+            "Error registering purchase:  " + e.getMessage(),
             "Error",
             javax.swing.JOptionPane.ERROR_MESSAGE);
     }
@@ -450,7 +449,7 @@ private boolean vaciarCarritoEnBD() {
         e.printStackTrace();
         javax.swing.JOptionPane.showMessageDialog(
             this,
-            "Error al vaciar el carrito: " + e.getMessage(),
+            "Error emptying cart:  " + e.getMessage(),
             "Error",
             javax.swing.JOptionPane.ERROR_MESSAGE);
     }
