@@ -20,10 +20,10 @@ public class Login extends javax.swing.JFrame {
         
         
         
-        String nuno = "<html><u>Quiero registrarme</u></html>";
+        String nuno = "<html><u>QI want to register</u></html>";
         registro.setText(nuno);
         
-        String administrador = "<html><u>Soy Administrador</u></html>";
+        String administrador = "<html><u>I am Administrator</u></html>";
         admin.setText(administrador);
     }
 
@@ -60,7 +60,7 @@ public class Login extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Contraseña");
+        jLabel2.setText("Password");
         jLabel2.setMinimumSize(new java.awt.Dimension(30, 16));
         jLabel2.setPreferredSize(new java.awt.Dimension(50, 16));
         jLabel2.setRequestFocusEnabled(false);
@@ -69,7 +69,7 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Usuario");
+        jLabel3.setText("User");
         jLabel3.setMinimumSize(new java.awt.Dimension(30, 16));
         jLabel3.setPreferredSize(new java.awt.Dimension(50, 16));
         jLabel3.setRequestFocusEnabled(false);
@@ -173,8 +173,8 @@ public class Login extends javax.swing.JFrame {
     // Verificar si algún campo contiene el signo menos
     if (usuario.contains("-") || password.contains("-")) {
         javax.swing.JOptionPane.showMessageDialog(this, 
-            "No se permiten valores negativos en ningún campo", 
-            "Error de validación", 
+            "Negative values ​​are not allowed in any field.", 
+            "Validation error", 
             javax.swing.JOptionPane.ERROR_MESSAGE);
         return; // Detener el proceso de login
     }

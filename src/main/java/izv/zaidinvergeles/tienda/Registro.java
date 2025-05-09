@@ -18,7 +18,7 @@ public class Registro extends javax.swing.JFrame {
     public Registro() {
         initComponents();
         
-        String html = "<html><u>Ya estoy registrado</u></html>";
+        String html = "<html><u>I am already registered</u></html>";
         registrado.setText(html);
     }
 
@@ -53,11 +53,11 @@ public class Registro extends javax.swing.JFrame {
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Nombre de usuario");
+        jLabel2.setText("User Name");
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Contraseña");
+        jLabel3.setText("Password");
 
         register.setText("Registrarme");
         register.addActionListener(new java.awt.event.ActionListener() {
@@ -72,7 +72,7 @@ public class Registro extends javax.swing.JFrame {
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Dirección de correo");
+        jLabel4.setText("Your email");
 
         adressField.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
@@ -165,8 +165,8 @@ public class Registro extends javax.swing.JFrame {
     // Verificar si algún campo contiene el signo menos
     if (usuario.contains("-") || password.contains("-") || correo.contains("-")) {
         javax.swing.JOptionPane.showMessageDialog(this, 
-            "No se permiten valores negativos en ningún campo", 
-            "Error de validación", 
+            "Negative values ​​are not allowed in any field.", 
+            "Validation error", 
             javax.swing.JOptionPane.ERROR_MESSAGE);
         return; // Detener el proceso de registro
     }

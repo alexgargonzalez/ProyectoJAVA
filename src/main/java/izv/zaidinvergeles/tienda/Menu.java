@@ -194,7 +194,7 @@ public class Menu extends javax.swing.JFrame {
         jMenuBar1.add(jMenu1);
 
         jMenu3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/carrito-de-compras.png"))); // NOI18N
-        jMenu3.setText("Carrito");
+        jMenu3.setText("Cart");
         jMenu3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jMenu3.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         jMenu3.setIconTextGap(20);
@@ -202,7 +202,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu3.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/img/usuario.png"))); // NOI18N
 
         ir_Carrito.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/carro-de-la-carretilla.png"))); // NOI18N
-        ir_Carrito.setText("Ir al carrito");
+        ir_Carrito.setText("Go to cart");
         ir_Carrito.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ir_CarritoActionPerformed(evt);
@@ -213,7 +213,7 @@ public class Menu extends javax.swing.JFrame {
         jMenuBar1.add(jMenu3);
 
         jMenu4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/salida.png"))); // NOI18N
-        jMenu4.setText("Salir");
+        jMenu4.setText("Exit");
         jMenu4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jMenu4.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         jMenu4.setIconTextGap(20);
@@ -221,7 +221,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu4.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/img/usuario.png"))); // NOI18N
 
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cerrar-sesion.png"))); // NOI18N
-        jMenuItem1.setText("Cerrar Sesión");
+        jMenuItem1.setText("Sing out");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -230,7 +230,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu4.add(jMenuItem1);
 
         jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/salir.png"))); // NOI18N
-        jMenuItem2.setText("Salir");
+        jMenuItem2.setText("Exit");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
