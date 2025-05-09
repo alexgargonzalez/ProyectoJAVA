@@ -31,7 +31,7 @@ public class PDFGenerator {
 
         // Nombre del archivo: Factura_ID_FECHA.pdf
         String fechaHora = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); // Formatea la fecha y hora actual.
-        String nombreArchivo = "Factura_" + idCliente + "_" + fechaHora + ".pdf"; // Crea el nombre del archivo PDF.
+        String nombreArchivo = "Bill_" + idCliente + "_" + fechaHora + ".pdf"; // Crea el nombre del archivo PDF.
         String rutaCompleta = rutaDirectorio + File.separator + nombreArchivo; // Define la ruta completa del archivo.
 
         Document documento = new Document(); // Crea un nuevo documento PDF.
@@ -51,7 +51,7 @@ public class PDFGenerator {
             return rutaCompleta; // Devolvemos la ruta del archivo creado.
 
         } catch (DocumentException | IOException e) { // Captura excepciones relacionadas con el documento o la entrada/salida.
-            JOptionPane.showMessageDialog(null, "Error al generar el PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); // Muestra un mensaje de error.
+            JOptionPane.showMessageDialog(null, "Error generating PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); // Muestra un mensaje de error.
             e.printStackTrace(); // Imprime la traza del error en la consola.
             return null; // Devuelve null en caso de error.
         }
@@ -64,21 +64,21 @@ public class PDFGenerator {
      */
     private static void agregarCabecera(Document doc, String nombre, int id) throws DocumentException {
         // Título principal
-        Paragraph titulo = new Paragraph("FACTURA DE COMPRA", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20)); // Crea un párrafo con el título en negrita.
+        Paragraph titulo = new Paragraph("PURCHASE INVOICE", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20)); // Crea un párrafo con el título en negrita.
         titulo.setAlignment(Element.ALIGN_CENTER); // Alinea el título al centro.
         doc.add(titulo); // Agrega el título al documento.
         doc.add(new Paragraph(" ")); // Agrega un espacio en blanco.
 
         // Fecha y número de factura
         String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()); // Formatea la fecha actual.
-        doc.add(new Paragraph("Fecha: " + fecha)); // Agrega la fecha al documento.
-        doc.add(new Paragraph("Nº Factura: " + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()))); // Agrega el número de factura basado en la fecha y hora.
+        doc.add(new Paragraph("Date: " + fecha)); // Agrega la fecha al documento.
+        doc.add(new Paragraph("Nº Bill: " + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()))); // Agrega el número de factura basado en la fecha y hora.
         doc.add(new Paragraph(" ")); // Agrega otro espacio en blanco.
 
         // Datos del cliente
-        doc.add(new Paragraph("DATOS DEL CLIENTE", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14))); // Agrega un subtítulo en negrita para los datos del cliente.
-        doc.add(new Paragraph("Cliente: " + nombre)); // Agrega el nombre del cliente.
-        doc.add(new Paragraph("ID Cliente: " + id)); // Agrega el ID del cliente.
+        doc.add(new Paragraph("CUSTOMER DATA", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14))); // Agrega un subtítulo en negrita para los datos del cliente.
+        doc.add(new Paragraph("Clent: " + nombre)); // Agrega el nombre del cliente.
+        doc.add(new Paragraph("ID Client: " + id)); // Agrega el ID del cliente.
         doc.add(new Paragraph(" ")); // Agrega un espacio en blanco.
     }
 
@@ -86,7 +86,7 @@ public class PDFGenerator {
      * Crea la tabla con la lista de productos.
      */
     private static void agregarTablaProductos(Document doc, ArrayList<Product> productos) throws DocumentException {
-        doc.add(new Paragraph("DETALLE DE PRODUCTOS", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14))); // Agrega un subtítulo para la sección de productos.
+        doc.add(new Paragraph("PRODUCT DETAILS", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14))); // Agrega un subtítulo para la sección de productos.
         doc.add(new Paragraph(" ")); // Agrega un espacio en blanco.
 
         PdfPTable tabla = new PdfPTable(4); // Crea una tabla con 4 columnas: ID, Producto, Precio, Subtotal.
@@ -94,7 +94,7 @@ public class PDFGenerator {
         tabla.setWidths(new float[]{1f, 4f, 1f, 1.5f}); // Define el ancho relativo de cada columna.
 
         // Encabezados
-        String[] headers = {"ID", "Producto", "Precio", "Subtotal"}; // Define los títulos de las columnas.
+        String[] headers = {"ID", "Product", "Price", "Subtotal"}; // Define los títulos de las columnas.
         for (String texto : headers) // Para cada encabezado,
             tabla.addCell(crearCelda(texto, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12), Element.ALIGN_CENTER)); // agrega una celda con el texto centrado y fuente en negrita.
 
@@ -139,12 +139,12 @@ public class PDFGenerator {
         doc.add(new Paragraph(" ")); // Añade espacio en blanco para separación visual.
 
         Font fuente = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10); // Fuente en cursiva, tamaño pequeño para las notas.
-        Paragraph mensaje = new Paragraph("Gracias por su compra. Este documento sirve como comprobante de pago.", fuente); // Mensaje de agradecimiento al cliente.
+        Paragraph mensaje = new Paragraph("Thank you for your purchase. This document serves as proof of payment.", fuente); // Mensaje de agradecimiento al cliente.
         mensaje.setAlignment(Element.ALIGN_CENTER); // Alinea el mensaje centrado.
         doc.add(mensaje); // Añade el mensaje al documento.
 
         String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()); // Fecha actual con formato día/mes/año horas:minutos:segundos.
-        Paragraph generado = new Paragraph("Documento generado el " + fecha, fuente); // Mensaje con fecha de generación del documento.
+        Paragraph generado = new Paragraph("Document generated on " + fecha, fuente); // Mensaje con fecha de generación del documento.
         generado.setAlignment(Element.ALIGN_CENTER); // Alinea en el centro.
         doc.add(generado); // Añade el mensaje al documento.
     }
